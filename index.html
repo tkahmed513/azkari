@@ -1,0 +1,3327 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أذكاري</title>
+
+<link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#8b7355">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran:wght@400&family=Cairo:wght@400;600;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+
+        :root {
+            /* الألوان الأساسية */
+            --primary-bg: #f5f3f0;
+            --secondary-bg: #ffffff;
+            --accent-color: #8b7355; /* اللون البني الأساسي */
+            --text-color: #2c2c2c;
+            --light-text: #666666;
+            --border-color: #e8e3dd;
+
+            /* توحيد جميع الأقسام لتأخذ نفس اللون البني */
+            --morning-color: #8b7355;
+            --evening-color: #8b7355;
+            --sleep-color: #8b7355;
+            --wake-color: #8b7355;
+            --tasbih-color: #8b7355;
+            --after-prayer-color: #8b7355;
+            --virtue-dhikr-color: #8b7355;
+            --virtue-dua-color: #8b7355;
+            --prophetic-dua-color: #8b7355;
+            --quran-dua-color: #8b7355;
+
+            /* متغيرات الإطار القرآني والوضع الداكن */
+            --frame-bg: #fdf6e8;
+            --frame-shadow-color: #e6dccf;
+            --frame-text: #000000;
+        }
+
+
+
+	/* =========================================
+   تعريف ألوان الوضع الداكن وتنسيق الزر
+   ========================================= */
+
+/* 1. تعريف الألوان المتغيرة (عشان نستخدمها في التبديل) */
+:root {
+    /* ألوان الإطار القرآني للوضع الفاتح (الافتراضي) */
+    --frame-bg: #fdf6e8;
+    --frame-shadow-color: #e6dccf;
+    --frame-text: #000000;
+}
+
+/* 2. ألوان الوضع الليلي (Dark Mode) */
+body.dark-mode {
+    --primary-bg: #121212;         /* خلفية الصفحة غامقة */
+    --secondary-bg: #1e1e1e;       /* خلفية الكروت غامقة */
+    --text-color: #e0e0e0;         /* النص فاتح */
+    --light-text: #aaaaaa;
+    --border-color: #333333;
+    
+    /* ألوان الإطار القرآني في الوضع الليلي */
+    --frame-bg: #2a2621;           /* بيج غامق جداً */
+    --frame-shadow-color: #000000; /* ظل أسود */
+    --frame-text: #ebd5b3;         /* نص ذهبي فاتح */
+}
+
+/* 3. تنسيق زر التبديل */
+header {
+    position: relative; /* ضروري عشان الزر ييجي في الركن */
+}
+
+.theme-btn {
+    position: absolute;
+    top: 20px;       /* المسافة من فوق */
+    right: 20px;     /* المسافة من اليمين */
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+    background-color: white;
+    color: var(--accent-color);
+}
+
+/* تعديل بسيط لإطار القرآن ليقبل تغيير الألوان */
+.quran-frame {
+    background-color: var(--frame-bg) !important;
+    box-shadow: 6px 6px 0px var(--frame-shadow-color) !important;
+}
+
+.quran-frame p.quran-text {
+    color: var(--frame-text) !important;
+}
+
+
+	/* =========================================
+           حل مشاكل الجوال (التحديد واللون الأزرق)
+           ========================================= */
+        
+        /* 1. إزالة اللون الأزرق الشفاف الذي يظهر عند النقر على أي عنصر */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 2. منع تحديد النصوص عند اللمس أو الضغط المطول */
+        .azkar-card, 
+        .flip-card-inner, 
+        .flip-card-front, 
+        .flip-card-back,
+        .nav-btn,
+        h1, h2, h3, p, span {
+            -webkit-user-select: none; /* Chrome, Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* IE 10+ */
+            user-select: none;         /* Standard */
+            -webkit-touch-callout: none; /* iOS Safari: منع ظهور قائمة النسخ عند الضغط المطول */
+        }
+
+        /* التأكد من أن الأزرار قابلة للنقر ولكن بدون تحديد النص بداخلها */
+        button {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+	
+
+        body {
+    font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden; /* <--- ده السطر المهم اللي لازم تتأكد إنه موجود */
+}
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #6b5344 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-family: 'Amiri Quran', serif;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--secondary-bg);
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background-color: var(--primary-bg);
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--accent-color);
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Azkar Cards */
+        .azkar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .azkar-card {
+            background-color: var(--secondary-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-right: 5px solid var(--accent-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .azkar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .azkar-card.morning {
+            border-right-color: var(--morning-color);
+            background: linear-gradient(135deg, rgba(255, 216, 155, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.evening {
+            border-right-color: var(--evening-color);
+            background: linear-gradient(135deg, rgba(155, 142, 201, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.after-prayer {
+            border-right-color: var(--after-prayer-color);
+            background: linear-gradient(135deg, rgba(158, 193, 207, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.sleep {
+            border-right-color: var(--sleep-color);
+            background: linear-gradient(135deg, rgba(123, 159, 184, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.wake {
+            border-right-color: var(--wake-color);
+            background: linear-gradient(135deg, rgba(244, 164, 96, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.tasbih {
+            border-right-color: var(--tasbih-color);
+            background: linear-gradient(135deg, rgba(168, 213, 186, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.virtue-dhikr {
+            border-right-color: var(--virtue-dhikr-color);
+            background: linear-gradient(135deg, rgba(212, 165, 165, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.virtue-dua {
+            border-right-color: var(--virtue-dua-color);
+            background: linear-gradient(135deg, rgba(201, 193, 155, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.prophetic-dua {
+            border-right-color: var(--prophetic-dua-color);
+            background: linear-gradient(135deg, rgba(165, 184, 212, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card.quran-dua {
+            border-right-color: var(--quran-dua-color);
+            background: linear-gradient(135deg, rgba(184, 165, 212, 0.1) 0%, transparent 100%);
+        }
+
+        .azkar-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .azkar-card p {
+            color: var(--text-color);
+            line-height: 2;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-family: 'Amiri Quran', serif;
+            letter-spacing: 0.5px;
+        }
+
+        .azkar-count {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Counter */
+        .counter-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .counter-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .counter-btn:hover {
+            background-color: #6b5344;
+            transform: scale(1.05);
+        }
+
+        .counter-display {
+            background-color: var(--primary-bg);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            min-width: 60px;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .azkar-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .nav-container {
+                gap: 0.25rem;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .azkar-card p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            header p {
+                font-size: 0.95rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .azkar-card {
+                padding: 1rem;
+            }
+
+            .azkar-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .azkar-card p {
+                font-size: 0.95rem;
+                line-height: 1.8;
+            }
+
+            .nav-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    background-color: var(--accent-color);
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: 3rem;
+    font-family: 'Cairo', sans-serif;
+}
+
+        footer p {
+            font-size: 0.95rem;
+        }
+
+        footer p:first-child {
+            font-family: 'Amiri Quran', serif;
+            font-size: 1.1rem;
+        }
+
+	
+	/* تكبير الخط في كل البطاقات */
+.azkar-card p {
+    font-size: 1.6rem !important;
+    line-height: 2.2 !important;
+}
+
+.azkar-card .quran-text {
+    font-size: 1.7rem !important;
+    line-height: 2.5 !important;
+}
+
+.azkar-card h3 {
+    font-size: 1.8rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.azkar-count {
+    font-size: 1.2rem !important;
+    padding: 0.5rem 1rem !important;
+}
+
+.counter-display {
+    font-size: 1.4rem !important;
+    min-width: 70px !important;
+}
+
+.counter-btn {
+    font-size: 1.2rem !important;
+    padding: 0.7rem 1.5rem !important;
+}
+
+/* تكبير الخط في الأقسام الأخرى */
+.virtue-dhikr p,
+.virtue-dua p,
+.prophetic-dua p {
+    font-size: 1.6rem !important;
+    line-height: 2.2 !important;
+}
+
+/* للتأقلم مع الجوال */
+@media (max-width: 768px) {
+    .azkar-card p {
+        font-size: 1.4rem !important;
+        line-height: 2 !important;
+    }
+    
+    .azkar-card .quran-text {
+        font-size: 1.45rem !important;
+        line-height: 2.2 !important;
+    }
+    
+    .azkar-card h3 {
+        font-size: 1.6rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .azkar-card p {
+        font-size: 1.3rem !important;
+        line-height: 1.9 !important;
+    }
+    
+    .azkar-card .quran-text {
+        font-size: 1.35rem !important;
+        line-height: 2 !important;
+    }
+    
+    .azkar-card h3 {
+        font-size: 1.5rem !important;
+    }
+}
+	
+
+
+
+	/* =========================================
+   تنسيقات القلب (Flip Card Styles)
+   ========================================= */
+   
+/* الحاوية الرئيسية للكرت */
+.azkar-card {
+    perspective: 1000px; /* يعطي عمقاً ثلاثي الأبعاد */
+    background: transparent !important; /* نلغي الخلفية من الحاوية لأنها ستنتقل للوجوه */
+    box-shadow: none !important; /* نلغي الظل من الحاوية */
+    border: none !important;
+    padding: 0 !important; /* نلغي الحواف الداخلية */
+}
+
+/* العنصر الداخلي الذي يدور */
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    border-radius: 15px;
+}
+
+/* الكلاس الذي يتم إضافته عند الاكتمال لقلب الكرت */
+.flip-card-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+/* تنسيق الوجهين (الأمامي والخلفي) */
+.flip-card-front, .flip-card-back {
+    position: relative; /* غيرنا هذا ليعمل بشكل انسيابي مع المحتوى */
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* يخفي الظهر عند الدوران */
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-right: 5px solid var(--accent-color); /* الإطار الافتراضي */
+}
+
+/* الوجه الأمامي (يأخذ مكانه الطبيعي) */
+.flip-card-front {
+    z-index: 2;
+}
+
+/* الوجه الخلفي */
+.flip-card-back {
+    position: absolute; /* ليتموضع تماماً خلف الأمامي */
+    top: 0;
+    left: 0;
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #fff; /* لون خلفية للظهر */
+    border-right-color: inherit; /* يرث لون القسم */
+}
+
+/* تنسيق نص الظهر */
+.flip-card-back p {
+    font-size: 2rem !important;
+    font-family: 'Amiri Quran', serif;
+    color: var(--accent-color);
+    margin: 0;
+    text-align: center;
+}
+
+/* زر إعادة المحاولة في الخلف (اختياري) */
+.reset-icon {
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--light-text);
+    transition: 0.3s;
+}
+.reset-icon:hover { color: var(--accent-color); transform: rotate(360deg); }
+
+
+
+/* =========================================
+   تنسيق زر النسخ الجديد (شفاف تماماً + ظل للأيقونة)
+   ========================================= */
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    
+    /* التعديل هنا: جعل الخلفية شفافة لإزالة الدائرة السوداء */
+    background: transparent; 
+    
+    /* لون الأيقونة أبيض */
+    color: #ffffff;
+    
+    border: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    padding: 6px;
+    -webkit-tap-highlight-color: transparent;
+
+    /* التعديل هنا: إضافة ظل للأيقونة نفسها لتظهر بوضوح */
+    filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.6));
+}
+
+/* تأثير عند الضغط */
+.copy-btn:active {
+    transform: scale(0.9);
+    filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.8));
+}
+
+/* تنسيق أيقونة SVG داخل الزر */
+.copy-btn svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 2.5; /* زيادة السمك قليلاً لتكون أوضح */
+    fill: none;
+    stroke: currentColor;
+}
+
+/* =========================================
+   تنسيق رسالة "تم النسخ" العائمة (كما هي)
+   ========================================= */
+.copy-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(50, 50, 50, 0.9);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+/* =========================================
+   تعديل المسافة للنصوص في الكروت بدون عنوان
+   ========================================= */
+/* هذا الكود يستهدف الفقرة التي تأتي مباشرة بعد زر النسخ (أي لا يوجد عنوان يفصل بينهما) */
+.copy-btn + p {
+    margin-top: 0.7rem !important; /* إنزال الكلام مسافة بسيطة */
+}
+
+
+
+	/* =========================================
+   تنسيق إطار القرآن (تعديل جديد)
+   ========================================= */
+.quran-frame {
+    border: 3px double var(--accent-color); /* حدود مزدوجة لتعطي شكلاً جمالياً */
+    border-radius: 15px;
+    padding: 2rem 1rem 1rem 1rem; /* مسافة علوية كبيرة عشان زر النسخ */
+    margin-bottom: 1.5rem; /* مسافة تفصل الإطار عن الأزرار تحت */
+    background-color: rgba(255, 255, 255, 0.6); /* خلفية فاتحة مميزة للإطار */
+    box-shadow: inset 0 0 15px rgba(139, 115, 85, 0.05); /* ظل داخلي خفيف */
+    position: relative;
+}
+
+/* تعديل زر النسخ داخل إطار القرآن ليكون متناسقاً */
+.quran-frame .copy-btn {
+    top: 5px;
+    left: 5px;
+}
+
+
+
+
+/* =========================================
+   تصحيح ظهر الكرت في الوضع الليلي
+   ========================================= */
+body.dark-mode .flip-card-back {
+    background-color: var(--secondary-bg) !important; /* يجعله يأخذ اللون الغامق */
+    border-color: var(--border-color); /* تنسيق الحدود */
+}
+
+/* تنسيق أيقونة الإعادة في الوضع الليلي */
+body.dark-mode .reset-icon {
+    color: var(--light-text);
+}
+
+body.dark-mode .reset-icon:hover {
+    color: var(--accent-color);
+}
+
+
+/* إخفاء أزرار العداد فقط (الأزرار + وإعادة) وترك المصدر ظاهراً */
+#quran-dua .counter-container {
+    display: none !important;
+}
+
+
+
+
+
+/* =========================================
+   تعديل حدود الكروت (إطار كامل ملون سميك يمين ورفيع باقي الجهات)
+   ========================================= */
+
+/* 1. إلغاء الحدود القديمة وإعداد النمط الجديد للوجهين */
+.flip-card-front, .flip-card-back {
+    /* إلغاء أي حدود سابقة */
+    border: none !important;
+    
+    /* تحديد سمك الحدود: (فوق: 2px) (يمين: 5px) (تحت: 2px) (شمال: 2px) */
+    border-width: 2px 5px 2px 2px !important;
+    
+    /* نوع الخط: متصل */
+    border-style: solid !important;
+    
+    /* اللون الافتراضي (البني الموحد) */
+    border-color: var(--accent-color) !important;
+
+    /* تحسين مظهر الخلفية مع الحدود */
+    background-clip: padding-box;
+}
+
+/* 2. التأكد من أن ظهر الكرت يأخذ لون الحدود الصحيح */
+.flip-card-back {
+    border-right-color: initial !important; /* إلغاء الخاصية القديمة */
+}
+
+/* 3. تخصيص لون الإطار الكامل حسب القسم (اختياري، بما أنك وحدت الألوان حالياً) */
+/* هذا يضمن لو غيرت لون قسم مستقبلاً، الإطار كله يتلون بنفس لونه */
+.flip-card-front.morning, .flip-card-back.morning { border-color: var(--morning-color) !important; }
+.flip-card-front.evening, .flip-card-back.evening { border-color: var(--evening-color) !important; }
+.flip-card-front.after-prayer, .flip-card-back.after-prayer { border-color: var(--after-prayer-color) !important; }
+.flip-card-front.sleep, .flip-card-back.sleep { border-color: var(--sleep-color) !important; }
+.flip-card-front.wake, .flip-card-back.wake { border-color: var(--wake-color) !important; }
+.flip-card-front.tasbih, .flip-card-back.tasbih { border-color: var(--tasbih-color) !important; }
+.flip-card-front.virtue-dhikr, .flip-card-back.virtue-dhikr { border-color: var(--virtue-dhikr-color) !important; }
+.flip-card-front.virtue-dua, .flip-card-back.virtue-dua { border-color: var(--virtue-dua-color) !important; }
+.flip-card-front.prophetic-dua, .flip-card-back.prophetic-dua { border-color: var(--prophetic-dua-color) !important; }
+.flip-card-front.quran-dua, .flip-card-back.quran-dua { border-color: var(--quran-dua-color) !important; }
+
+
+
+
+
+/* =========================================
+   تنسيق النافذة المنبثقة (iOS Blur Effect)
+   ========================================= */
+.ios-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    
+    /* الخلفية الضبابية (السر في الاحترافية) */
+    background: rgba(0, 0, 0, 0.15); /* لون داكن خفيف جداً */
+    backdrop-filter: blur(15px);      /* تغبيش قوي للخلفية */
+    -webkit-backdrop-filter: blur(15px); /* لدعم هواتف آيفون */
+    
+    /* التمركز */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* الإخفاء والأنيميشن */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ios-popup-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* حاوية الكرت داخل النافذة */
+.ios-popup-content {
+    width: 85%;
+    max-width: 380px;
+    transform: scale(0.8); /* يبدأ صغيراً */
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* تأثير النبضة (Bounce) */
+    pointer-events: none; /* منع التفاعل مع الكرت المعروض */
+}
+
+.ios-popup-overlay.active .ios-popup-content {
+    transform: scale(1); /* يكبر للحجم الطبيعي بمرونة */
+}
+
+/* تحسين شكل الكرت داخل البوب أب */
+.ios-popup-content .flip-card-front {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important; /* ظل قوي للعمق */
+    border-radius: 20px !important;
+    background-color: var(--secondary-bg) !important;
+    border: 2px solid var(--accent-color) !important; /* تأكيد الإطار */
+}
+/* =========================================
+   تنسيق إعدادات البوب أب (الترس والقائمة)
+   ========================================= */
+/* زر الترس */
+.popup-settings-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255,255,255,0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10002;
+    color: white;
+}
+.popup-settings-btn svg { width: 22px; height: 22px; }
+
+/* القائمة المنسدلة */
+.popup-settings-menu {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: rgba(40, 40, 40, 0.9);
+    backdrop-filter: blur(20px);
+    padding: 15px;
+    border-radius: 12px;
+    width: 180px;
+    z-index: 10002;
+    border: 1px solid rgba(255,255,255,0.1);
+    
+    /* أنيميشن الظهور */
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.popup-settings-menu.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+}
+
+/* خيارات التبديل (Toggle) inside Menu */
+.toggle-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    cursor: pointer;
+}
+
+.toggle-option:last-child { margin-bottom: 0; }
+.toggle-option input { display: none; }
+
+/* رسم زر التبديل */
+.toggle-switch {
+    width: 36px;
+    height: 20px;
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    position: relative;
+    transition: 0.3s;
+}
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: 0.3s;
+}
+.toggle-option input:checked + .toggle-switch {
+    background-color: var(--accent-color);
+}
+.toggle-option input:checked + .toggle-switch::after {
+    left: calc(100% - 18px);
+}
+
+/* =========================================
+   التحكم الذكي في الظهور (العدد والمصدر)
+   ========================================= */
+/* إخفاء العناصر الزائدة دائماً */
+.ios-popup-content .copy-btn,
+.ios-popup-content .counter-container,
+.ios-popup-content .reset-icon {
+    display: none !important;
+}
+
+/* افتراضياً: إخفاء العدد والمصدر داخل البوب أب */
+.ios-popup-content .azkar-count {
+    display: none !important;
+    margin-top: 1rem !important;
+    font-family: 'Cairo', sans-serif !important;
+    font-size: 1rem !important;
+    padding: 4px 12px !important;
+}
+
+/* إظهار العدد فقط عند التفعيل */
+.ios-popup-content.show-count .azkar-count[data-type="count"] {
+    display: inline-block !important;
+}
+
+/* إظهار المصدر فقط عند التفعيل */
+.ios-popup-content.show-source .azkar-count[data-type="source"] {
+    display: inline-block !important;
+}
+
+/* =========================================
+   تخصيص خط "شهرزاد" للبوب أب فقط
+   ========================================= */
+.ios-popup-content p, 
+.ios-popup-content .quran-text {
+    /* هنا بنقوله استخدم الخط الجديد ده بس */
+    font-family: 'Scheherazade New', serif !important;
+    
+    /* تكبير حجم الخط عشان يبقى واضح */
+    font-size: 1rem !important; 
+    
+    /* تظبيط المسافات عشان التشكيل */
+    line-height: 2.6 !important;
+    font-weight: 700 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <button id="theme-btn" class="theme-btn" onclick="toggleTheme()">الوضع الليلي</button>
+        
+        <h1>أذكاري</h1>
+        <p>أذكارك اليومية لتطهير القلب وحفظ النفس</p>
+    </header>
+
+    <nav>
+        <div class="nav-container">
+            <button class="nav-btn active" onclick="showSection('morning')">أذكار الصباح</button>
+            <button class="nav-btn" onclick="showSection('evening')">أذكار المساء</button>
+            <button class="nav-btn" onclick="showSection('after-prayer')">أذكار بعد الصلاة</button>
+            <button class="nav-btn" onclick="showSection('sleep')">أذكار النوم</button>
+            <button class="nav-btn" onclick="showSection('wake')">أذكار الاستيقاظ</button>
+            <button class="nav-btn" onclick="showSection('tasbih')">تسابيح</button>
+            <button class="nav-btn" onclick="showSection('virtue-dhikr')">فضل الذكر</button>
+            <button class="nav-btn" onclick="showSection('virtue-dua')">فضل الدعاء</button>
+            <button class="nav-btn" onclick="showSection('prophetic-dua')">أدعية نبوية</button>
+            <button class="nav-btn" onclick="showSection('quran-dua')">أدعية من القرآن</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- أذكار الصباح -->
+        <!-- أذكار الصباح -->
+<div id="morning" class="section active">
+    <h2 class="section-title">أذكار الصباح</h2>
+    <div class="azkar-grid">
+        <!-- الذكر الأول - آية الكرسي -->
+        <div class="azkar-card morning">
+            <h3>آية الكرسي</h3>
+            <p class="quran-text">أَعُوذُ بِاللَّهِ مِنَ الشَّيطَانِ الرَّجِيمِ ﴿ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَاوَاتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَاوَاتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ  ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني - سورة الإخلاص -->
+        <div class="azkar-card morning">
+            <h3>سورة الإخلاص</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ هُوَ ٱللَّهُ أَحَدٌ * ٱللَّهُ ٱلصَّمَدُ * لَمْ يَلِدْ وَلَمْ يُولَدْ * وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ ﴾</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث - سورة الفلق -->
+        <div class="azkar-card morning">
+            <h3>سورة الفلق</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ * مِن شَرِّ مَا خَلَقَ * وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ * وَمِن شَرِّ ٱلنَّـفَّاثَاتِ فِى ٱلْعُقَدِ * وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ﴾</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع - سورة الناس -->
+        <div class="azkar-card morning">
+            <h3>سورة الناس</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ * مَلِكِ ٱلنَّاسِ * إِلَـٰهِ ٱلنَّاسِ * مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ * ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ * مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ﴾</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس - دعاء الصباح -->
+        <div class="azkar-card morning">
+            <p>أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيرَ مَا بَعْدَهُ ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعذابٍ فِي الْقَبْرِ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس - دعاء الصباح الثاني -->
+        <div class="azkar-card morning">
+            <p>اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا ، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع - دعاء الاستغفار -->
+        <div class="azkar-card morning">
+            <p>اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لاَ يَغْفِرُ الذُّنوبَ إِلاَّ أَنْتَ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن - الرضا بالله ربا -->
+        <div class="azkar-card morning">
+            <p>رَضِيتُ بِاللَّهِ رَبَّاً، وَبِالْإِسْلاَمِ دِيناً، وَبِمُحَمَّدٍ صلى الله عليه وسلم نَبِيّاً و رسولًا</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع - الشهادة لله -->
+        <div class="azkar-card morning">
+            <p>اللّهُـمَّ إِنِّـي أَصْبَـحْتُ أُشْـهِدُك ، وَأُشْـهِدُ حَمَلَـةَ عَـرْشِـك ، وَمَلَائِكَتَكَ ، وَجَمـيعَ خَلْـقِك ، أَنَّـكَ أَنْـتَ اللهُ لا إلهَ إلاّ أَنْـتَ وَحْـدَكَ لا شَريكَ لَـك ، وَأَنَّ ُ مُحَمّـداً عَبْـدُكَ وَرَسـولُـك</p>
+            <span class="azkar-count">4 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر العاشر - الحمد على النعم -->
+        <div class="azkar-card morning">
+            <p>اللّهُـمَّ ما أَصْبَـحَ بي مِـنْ نِعْـمَةٍ أَو بِأَحَـدٍ مِـنْ خَلْـقِك ، فَمِـنْكَ وَحْـدَكَ لا شريكَ لَـك ، فَلَـكَ الْحَمْـدُ وَلَـكَ الشُّكْـر</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي عشر - حسبي الله -->
+        <div class="azkar-card morning">
+            <p>حَسْبِـيَ اللّهُ لا إلهَ إلاّ هُوَ عَلَـيهِ تَوَكَّـلتُ وَهُوَ رَبُّ العَرْشِ العَظـيم</p>
+            <span class="azkar-count">7 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني عشر - بسم الله الذي لا يضر -->
+        <div class="azkar-card morning">
+            <p>بِسـمِ اللهِ الذي لا يَضُـرُّ مَعَ اسمِـهِ شَيءٌ في الأرْضِ وَلا في السّمـاءِ وَهـوَ السّمـيعُ العَلـيم</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث عشر - اللهم بك أصبحنا -->
+        <div class="azkar-card morning">
+            <p>اللّهُـمَّ بِكَ أَصْـبَحْنا وَبِكَ أَمْسَـينا ، وَبِكَ نَحْـيا وَبِكَ نَمُـوتُ وَإِلَـيْكَ النُّـشُور</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع عشر - الفطرة والإخلاص -->
+        <div class="azkar-card morning">
+            <p>أَصْبَـحْـنا عَلَى فِطْرَةِ الإسْلاَمِ، وَعَلَى كَلِمَةِ الإِخْلاَصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إبْرَاهِيمَ حَنِيفاً مُسْلِماً وَمَا كَانَ مِنَ المُشْرِكِينَ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس عشر - سبحان الله وبحمده -->
+        <div class="azkar-card morning">
+            <p>سُبْحـانَ اللهِ وَبِحَمْـدِهِ عَدَدَ خَلْـقِه ، وَرِضـا نَفْسِـه ، وَزِنَـةَ عَـرْشِـه ، وَمِـدادَ كَلِمـاتِـه</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس عشر - اللهم عافني -->
+        <div class="azkar-card morning">
+            <p>اللّهُـمَّ عافِـني في بَدَنـي ، اللّهُـمَّ عافِـني في سَمْـعي ، اللّهُـمَّ عافِـني في بَصَـري ، لا إلهَ إلاّ أَنْـتَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع عشر - الاستعاذة من الكفر والفقر -->
+        <div class="azkar-card morning">
+            <p>اللّهُـمَّ إِنّـي أَعـوذُ بِكَ مِنَ الْكُـفر ، وَالفَـقْر ، وَأَعـوذُ بِكَ مِنْ عَذابِ القَـبْر ، لا إلهَ إلاّ أَنْـتَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن عشر - دعاء العفو والعافية -->
+        <div class="azkar-card morning">
+            <p>اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في الدُّنْـيا وَالآخِـرَة ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في ديني وَدُنْـيايَ وَأهْـلي وَمالـي ، اللّهُـمَّ اسْتُـرْ عـوْراتي وَآمِـنْ رَوْعاتـي ، اللّهُـمَّ احْفَظْـني مِن بَـينِ يَدَيَّ وَمِن خَلْفـي وَعَن يَمـيني وَعَن شِمـالي ، وَمِن فَوْقـي ، وَأَعـوذُ بِعَظَمَـتِكَ أَن أُغْـتالَ مِن تَحْتـي</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع عشر - يا حي يا قيوم -->
+        <div class="azkar-card morning">
+            <p>يَا حَيُّ يَا قيُّومُ بِرَحْمَتِكَ أسْتَغِيثُ أصْلِحْ لِي شَأنِي كُلَّهُ وَلاَ تَكِلْنِي إلَى نَفْسِي طَـرْفَةَ عَيْنٍ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر العشرون - دعاء خير هذا اليوم -->
+        <div class="azkar-card morning">
+            <p>أَصْبَـحْـنا وَأَصْبَـحْ المُـلكُ للهِ رَبِّ العـالَمـين ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ خَـيْرَ هـذا الـيَوْم ، فَـتْحَهُ ، وَنَصْـرَهُ ، وَنـورَهُ وَبَـرَكَتَـهُ ، وَهُـداهُ ، وَأَعـوذُ بِـكَ مِـنْ شَـرِّ ما فـيهِ وَشَـرِّ ما بَعْـدَه</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي والعشرون - دعاء عالم الغيب -->
+        <div class="azkar-card morning">
+            <p>اللّهُـمَّ عالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه ، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت ، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِرْكِهِ ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني والعشرون - أعوذ بكلمات الله التامات -->
+        <div class="azkar-card morning">
+            <p>أَعـوذُ بِكَلِمـاتِ اللّهِ التّـامّـاتِ مِنْ شَـرِّ ما خَلَـق</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث والعشرون - الصلاة على النبي -->
+        <div class="azkar-card morning">
+            <p>اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد</p>
+            <span class="azkar-count">10 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع والعشرون - الاستغفار من الشرك -->
+        <div class="azkar-card morning">
+            <p>اللَّهُمَّ إِنَّا نَعُوذُ بِكَ مِنْ أَنْ نُشْرِكَ بِكَ شَيْئًا نَعْلَمُهُ ، وَنَسْتَغْفِرُكَ لِمَا لَا نَعْلَمُهُ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس والعشرون - الاستعاذة من الهم والحزن -->
+        <div class="azkar-card morning">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس والعشرون - استغفار الله العظيم -->
+        <div class="azkar-card morning">
+            <p>أسْتَغْفِرُ اللهَ العَظِيمَ الَّذِي لاَ إلَهَ إِلَّا هُوَ، الحَيُّ القَيُّومُ، وَأتُوبُ إلَيهِ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع والعشرون - الحمد لله كما ينبغي -->
+        <div class="azkar-card morning">
+            <p>يَا رَبِّ , لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ , وَلِعَظِيمِ سُلْطَانِكَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن والعشرون - دعاء العلم النافع -->
+        <div class="azkar-card morning">
+            <p>اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع والعشرون - التوكل على الله -->
+        <div class="azkar-card morning">
+            <p>اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ ، عَلَيْكَ تَوَكَّلْتُ ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ , مَا شَاءَ اللَّهُ كَانَ ، وَمَا لَمْ يَشَأْ لَمْ يَكُنْ ، وَلا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ , أَعْلَمُ أَنَّ اللَّهَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ، وَأَنَّ اللَّهَ قَدْ أَحَاطَ بِكُلِّ شَيْءٍ عِلْمًا , اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي ، وَمِنْ شَرِّ كُلِّ دَابَّةٍ أَنْتَ آخِذٌ بِنَاصِيَتِهَا ، إِنَّ رَبِّي عَلَى صِرَاطٍ مُسْتَقِيمٍ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثلاثون - لا إله إلا الله وحده -->
+        <div class="azkar-card morning">
+            <p>لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي والثلاثون - سبحان الله وبحمده -->
+        <div class="azkar-card morning">
+            <p>سُبْحَانَ اللهِ وَبِحَمْدِهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني والثلاثون - أستغفر الله وأتوب إليه -->
+        <div class="azkar-card morning">
+            <p>أسْتَغْفِرُ اللهَ وَأتُوبُ إلَيْهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- أذكار المساء -->
+        <!-- أذكار المساء -->
+<div id="evening" class="section">
+    <h2 class="section-title">أذكار المساء</h2>
+    <div class="azkar-grid">
+        <!-- الذكر الأول - آية الكرسي -->
+        <div class="azkar-card evening">
+            <h3>آية الكرسي</h3>
+            <p class="quran-text">أَعُوذُ بِاللَّهِ مِنَ الشَّيطَانِ الرَّجِيمِ ﴿ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَاوَاتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَاوَاتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني - آخر آيتين من سورة البقرة -->
+        <div class="azkar-card evening">
+            <h3>آخر آيتين من سورة البقرة</h3>
+            <p class="quran-text">أَعُوذُ بِاللَّهِ مِنَ الشَّيطَانِ الرَّجِيمِ ﴿آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِنْ رُسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ * لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ رَبَّنَا لَا تُؤَاخِذْنَا إِنْ نَّسِينَآ أَوْ أَخْطَأْنَا رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِنْ قَبْلِنَا رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا أَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث - سورة الإخلاص -->
+        <div class="azkar-card evening">
+            <h3>سورة الإخلاص</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ هُوَ ٱللَّهُ أَحَدٌ * ٱللَّهُ ٱلصَّمَدُ * لَمْ يَلِدْ وَلَمْ يُولَدْ * وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ ﴾</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع - سورة الفلق -->
+        <div class="azkar-card evening">
+            <h3>سورة الفلق</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ * مِن شَرِّ مَا خَلَقَ * وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ * وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ * وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ﴾</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس - سورة الناس -->
+        <div class="azkar-card evening">
+            <h3>سورة الناس</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ أَعُوذُ بِرَبِّ النَّاسِ * مَلِكِ النَّاسِ * إِلَـٰهِ النَّاسِ * مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ * الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ * مِنَ الْجِنَّةِ وَالنَّاسِ﴾</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس - دعاء المساء الأول -->
+        <div class="azkar-card evening">
+            <p>أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيرَ مَا بَعْدَهَا ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع - دعاء المساء الثاني -->
+        <div class="azkar-card evening">
+            <p>اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا ، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن - دعاء الاستغفار -->
+        <div class="azkar-card evening">
+            <p>اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلاَّ أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لاَ يَغْفِرُ الذُّنوبَ إِلاَّ أَنْتَ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع - الرضا بالله ربا -->
+        <div class="azkar-card evening">
+            <p>رَضِيتُ بِاللَّهِ رَبَّاً، وَبِالْإِسْلاَمِ دِيناً، وَبِمُحَمَّدٍ صلى الله عليه وسلم نَبِيّاً</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر العاشر - الشهادة لله -->
+        <div class="azkar-card evening">
+            <p>اللّهُـمَّ إِنِّـي أَمْسَيْتُ أُشْـهِدُك ، وَأُشْـهِدُ حَمَلَـةَ عَـرْشِـك ، وَمَلَائِكَتَكَ ، وَجَمـيعَ خَلْـقِك ، أَنَّـكَ أَنْـتَ اللهُ لا إلهَ إلاّ أَنْـتَ وَحْـدَكَ لا شَريكَ لَـك ، وَأَنَّ ُ مُحَمّـداً عَبْـدُكَ وَرَسـولُـك</p>
+            <span class="azkar-count">4 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي عشر - الحمد على النعم -->
+        <div class="azkar-card evening">
+            <p>اللّهُـمَّ ما أَمْسَى بي مِنْ نِعْـمَةٍ أَو بِأَحَـدٍ مِـنْ خَلْـقِك ، فَمِـنْكَ وَحْـدَكَ لا شريكَ لَـك ، فَلَـكَ الْحَمْـدُ وَلَـكَ الشُّكْـر</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني عشر - حسبي الله -->
+        <div class="azkar-card evening">
+            <p>حَسْبِـيَ اللّهُ لا إلهَ إلاّ هُوَ عَلَـيهِ تَوَكَّـلتُ وَهُوَ رَبُّ العَرْشِ العَظـيم</p>
+            <span class="azkar-count">7 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث عشر - بسم الله الذي لا يضر -->
+        <div class="azkar-card evening">
+            <p>بِسـمِ اللهِ الذي لا يَضُـرُّ مَعَ اسمِـهِ شَيءٌ في الأرْضِ وَلا في السّمـاءِ وَهُوَ السّمـيعُ العَلـيم</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع عشر - اللهم بك أمسينا -->
+        <div class="azkar-card evening">
+            <p>اللّهُـمَّ بِكَ أَمْسَـينا وَبِكَ أَصْـبَحْنا، وَبِكَ نَحْـيا وَبِكَ نَمُـوتُ وَإِلَـيْكَ الْمَصِيرُ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس عشر - الفطرة والإخلاص -->
+        <div class="azkar-card evening">
+            <p>أَمْسَيْنَا عَلَى فِطْرَةِ الإسْلاَمِ، وَعَلَى كَلِمَةِ الإِخْلاَصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إبْرَاهِيمَ حَنِيفاً مُسْلِماً وَمَا كَانَ مِنَ المُشْرِكِينَ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس عشر - سبحان الله وبحمده -->
+        <div class="azkar-card evening">
+            <p>سُبْحـانَ اللهِ وَبِحَمْـدِهِ عَدَدَ خَلْـقِه ، وَرِضـا نَفْسِـه ، وَزِنَـةَ عَـرْشِـه ، وَمِـدادَ كَلِمـاتِـه</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع عشر - اللهم عافني -->
+        <div class="azkar-card evening">
+            <p>اللّهُـمَّ عافِـني في بَدَنـي ، اللّهُـمَّ عافِـني في سَمْـعي ، اللّهُـمَّ عافِـني في بَصَـري ، لا إلهَ إلاّ أَنْـتَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن عشر - الاستعاذة من الكفر والفقر -->
+        <div class="azkar-card evening">
+            <p>اللّهُـمَّ إِنّـي أَعـوذُ بِكَ مِنَ الْكُـفر ، وَالفَـقْر ، وَأَعـوذُ بِكَ مِنْ عَذابِ القَـبْر ، لا إلهَ إلاّ أَنْـتَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع عشر - دعاء العفو والعافية -->
+        <div class="azkar-card evening">
+            <p>اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في الدُّنْـيا وَالآخِـرَة ، اللّهُـمَّ إِنِّـي أسْـأَلُـكَ العَـفْوَ وَالعـافِـيةَ في ديني وَدُنْـيايَ وَأهْـلي وَمالـي ، اللّهُـمَّ اسْتُـرْ عـوْراتي وَآمِـنْ رَوْعاتـي ، اللّهُـمَّ احْفَظْـني مِن بَـينِ يَدَيَّ وَمِن خَلْفـي وَعَن يَمـيني وَعَن شِمـالي ، وَمِن فَوْقـي ، وَأَعـوذُ بِعَظَمَـتِكَ أَن أُغْـتالَ مِن تَحْتـي</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر العشرون - يا حي يا قيوم -->
+        <div class="azkar-card evening">
+            <p>يَا حَيُّ يَا قيُّومُ بِرَحْمَتِكَ أسْتَغِيثُ أصْلِحْ لِي شَأنِي كُلَّهُ وَلاَ تَكِلْنِي إلَى نَفْسِي طَـرْفَةَ عَيْنٍ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي والعشرون - دعاء خير هذه الليلة -->
+        <div class="azkar-card evening">
+            <p>أَمْسَيْنَا وَأَمْسَى الْمُلْكُ للهِ رَبِّ الْعَالَمَيْنِ، اللَّهُمَّ إِنَّي أسْأَلُكَ خَيْرَ هَذَه اللَّيْلَةِ فَتْحَهَا ونَصْرَهَا، ونُوْرَهَا وبَرَكَتهَا، وَهُدَاهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فيهِا وَشَرَّ مَا بَعْدَهَا</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني والعشرون - دعاء عالم الغيب -->
+        <div class="azkar-card evening">
+            <p>اللّهُـمَّ عالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه ، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت ، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِرْكِهِ ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث والعشرون - أعوذ بكلمات الله التامات -->
+        <div class="azkar-card evening">
+            <p>أَعـوذُ بِكَلِمـاتِ اللّهِ التّـامّـاتِ مِنْ شَـرِّ ما خَلَـق</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع والعشرون - الصلاة على النبي -->
+        <div class="azkar-card evening">
+            <p>اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ على نَبِيِّنَا مُحمَّد</p>
+            <span class="azkar-count">10 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس والعشرون - الاستغفار من الشرك -->
+        <div class="azkar-card evening">
+            <p>اللَّهُمَّ إِنَّا نَعُوذُ بِكَ مِنْ أَنْ نُشْرِكَ بِكَ شَيْئًا نَعْلَمُهُ ، وَنَسْتَغْفِرُكَ لِمَا لَا نَعْلَمُهُ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس والعشرون - الاستعاذة من الهم والحزن -->
+        <div class="azkar-card evening">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَقَهْرِ الرِّجَالِ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع والعشرون - استغفار الله العظيم -->
+        <div class="azkar-card evening">
+            <p>أسْتَغْفِرُ اللهَ العَظِيمَ الَّذِي لاَ إلَهَ إِلَّا هُوَ، الحَيُّ القَيُّومُ، وَأتُوبُ إلَيهِ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن والعشرون - الحمد لله كما ينبغي -->
+        <div class="azkar-card evening">
+            <p>يَا رَبِّ , لَكَ الْحَمْدُ كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ , وَلِعَظِيمِ سُلْطَانِكَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع والعشرون - لا إله إلا الله وحده -->
+        <div class="azkar-card evening">
+            <p>لَا إلَه إلّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءِ قَدِيرِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثلاثون - سبحان الله وبحمده -->
+        <div class="azkar-card evening">
+            <p>سُبْحَانَ اللهِ وَبِحَمْدِهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي والثلاثون - التوكل على الله -->
+        <div class="azkar-card evening">
+            <p>اللَّهُمَّ أَنْتَ رَبِّي لا إِلَهَ إِلا أَنْتَ ، عَلَيْكَ تَوَكَّلْتُ ، وَأَنْتَ رَبُّ الْعَرْشِ الْعَظِيمِ , مَا شَاءَ اللَّهُ كَانَ ، وَمَا لَمْ يَشَأْ لَمْ يَكُنْ ، وَلا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ الْعَلِيِّ الْعَظِيمِ , أَعْلَمُ أَنَّ اللَّهَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ، وَأَنَّ اللَّهَ قَدْ أَحَاطَ بِكُلِّ شَيْءٍ عِلْمًا , اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي ، وَمِنْ شَرِّ كُلِّ دَابَّةٍ أَنْتَ آخِذٌ بِنَاصِيَتِهَا ، إِنَّ رَبِّي عَلَى صِرَاطٍ مُسْتَقِيمٍ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- أذكار بعد الصلاة -->
+<div id="after-prayer" class="section">
+    <h2 class="section-title">أذكار بعد الصلاة</h2>
+    <div class="azkar-grid">
+        <!-- الذكر الأول - الاستغفار -->
+        <div class="azkar-card after-prayer">
+            <p>أَسْتَغْفِرُ اللهَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني - الدعاء بعد السلام -->
+        <div class="azkar-card after-prayer">
+            <p>اللَّهُمَّ أَنْتَ السَّلاَمُ وَمِنْكَ السَّلاَمُ، تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالإِكْرَامِ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث - التهليل الكبير -->
+        <div class="azkar-card after-prayer">
+            <p>لاَ إِلَـهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، اللَّهُمَّ لاَ مَانِعَ لِمَا أَعْطَيْتَ، وَلاَ مُعْطِيَ لِمَا مَنَعْتَ، وَلاَ يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع - التهليل الصغير -->
+        <div class="azkar-card after-prayer">
+            <p>لاَ إِلَـهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس - التسبيح -->
+        <div class="azkar-card after-prayer">
+            <p>سُبْحَانَ اللَّهِ</p>
+            <span class="azkar-count">33 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس - الحمد -->
+        <div class="azkar-card after-prayer">
+            <p>الْحَمْدُ لِلَّهِ</p>
+            <span class="azkar-count">33 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع - التكبير -->
+        <div class="azkar-card after-prayer">
+            <p>اللَّهُ أَكْبَرُ</p>
+            <span class="azkar-count">33 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن - التهليل بعد التسبيح -->
+        <div class="azkar-card after-prayer">
+            <p>لاَ إِلَـهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع - سورة الإخلاص -->
+        <div class="azkar-card after-prayer">
+            <h3>سورة الإخلاص</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ هُوَ ٱللَّهُ أَحَدٌ * ٱللَّهُ ٱلصَّمَدُ * لَمْ يَلِدْ وَلَمْ يُولَدْ * وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر العاشر - سورة الفلق -->
+        <div class="azkar-card after-prayer">
+            <h3>سورة الفلق</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ * مِن شَرِّ مَا خَلَقَ * وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ * وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ * وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي عشر - سورة الناس -->
+        <div class="azkar-card after-prayer">
+            <h3>سورة الناس</h3>
+            <p class="quran-text">بسم الله الرحمن الرحيم ﴿قُلْ أَعُوذُ بِرَبِّ النَّاسِ * مَلِكِ النَّاسِ * إِلَـٰهِ النَّاسِ * مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ * الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ * مِنَ الْجِنَّةِ وَالنَّاسِ ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني عشر - آية الكرسي -->
+        <div class="azkar-card after-prayer">
+            <h3>آية الكرسي</h3>
+            <p class="quran-text">أَعُوذُ بِاللَّهِ مِنَ الشَّيطَانِ الرَّجِيمِ ﴿ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَاوَاتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَاوَاتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث عشر - التهليل بعد المغرب والصبح -->
+        <div class="azkar-card after-prayer">
+            <p>لاَ إِلَـهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحيـي وَيُمـيتُ وهُوَ على كُلّ شيءٍ قدير (عَشْر مَرّات بَعْدَ المَغْرِب وَالصّـبْح)</p>
+            <span class="azkar-count">10 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع عشر - دعاء بعد صلاة الصبح -->
+        <div class="azkar-card after-prayer">
+            <p>اللّهُـمَّ إِنِّـي أَسْأَلُـكَ عِلْمـاً نافِعـاً وَرِزْقـاً طَيِّـباً ، وَعَمَـلاً مُتَقَـبَّلاً (بَعْد السّلامِ من صَلاةِ الصبح)</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس عشر - الاستعاذة من النار -->
+        <div class="azkar-card after-prayer">
+            <p>اللَّهُمَّ أَجِرْنِي مِنْ النَّار (بعد صلاة الصبح والمغرب)</p>
+            <span class="azkar-count">7 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس عشر - دعاء الذكر والشكر -->
+        <div class="azkar-card after-prayer">
+            <p>اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- أذكار النوم -->
+<div id="sleep" class="section">
+    <h2 class="section-title">أذكار النوم</h2>
+    <div class="azkar-grid">
+        <!-- الذكر الأول -->
+        <div class="azkar-card sleep">
+            <p>بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِن أَمْسَكْتَ نَفْسِي فارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فاحْفَظْهَا بِمَا تَحْفَظُ بِهِ عِبَادَكَ الصَّالِحِينَ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني -->
+        <div class="azkar-card sleep">
+            <p>اللَّهُمَّ إِنَّكَ خَلَقْتَ نَفْسِي وَأَنْتَ تَوَفَّاهَا، لَكَ مَمَاتُهَا وَمَحْيَاهَا، إِنْ أَحْيَيْتَهَا فَاحْفَظْهَا، وَإِنْ أَمَتَّهَا فَاغْفِرْ لَهَا. اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَافِيَةَ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث -->
+        <div class="azkar-card sleep">
+            <p>اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ</p>
+            <span class="azkar-count">3 مرات</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع -->
+        <div class="azkar-card sleep">
+            <p>بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس -->
+        <div class="azkar-card sleep">
+            <p>اللَّهُمَّ عَالِـمَ الغَـيْبِ وَالشّـهادَةِ فاطِـرَ السّماواتِ وَالأرْضِ رَبَّ كـلِّ شَـيءٍ وَمَليـكَه، أَشْهَـدُ أَنْ لا إِلـهَ إِلاّ أَنْت، أَعـوذُ بِكَ مِن شَـرِّ نَفْسـي وَمِن شَـرِّ الشَّيْـطانِ وَشِرْكِهِ، وَأَنْ أَقْتَـرِفَ عَلـى نَفْسـي سوءاً أَوْ أَجُـرَّهُ إِلـى مُسْـلِم</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس -->
+        <div class="azkar-card sleep">
+            <p>اللَّهُمَّ أَسْلَمْتُ نَفْـسي إِلَـيْكَ، وَفَوَّضْـتُ أَمْـري إِلَـيْكَ، وَوَجَّـهْتُ وَجْـهي إِلَـيْكَ، وَأَلْـجَـاْتُ ظَهـري إِلَـيْكَ، رَغْبَـةً وَرَهْـبَةً إِلَـيْكَ، لا مَلْجَـأَ وَلا مَنْـجـا مِنْـكَ إِلاّ إِلَـيْكَ، آمَنْـتُ بِكِتـابِكَ الّـذي أَنْزَلْـتَ وَبِنَبِـيِّـكَ الّـذي أَرْسَلْـت</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع - التسبيح -->
+        <div class="azkar-card sleep">
+            <p>سُبْحَانَ اللَّهِ</p>
+            <span class="azkar-count">33 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن - الحمد -->
+        <div class="azkar-card sleep">
+            <p>الْحَمْدُ لِلَّهِ</p>
+            <span class="azkar-count">33 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع - التكبير -->
+        <div class="azkar-card sleep">
+            <p>اللَّهُ أَكْبَرُ</p>
+            <span class="azkar-count">34 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر العاشر - المعوذات والمسح -->
+        <div class="azkar-card sleep">
+            <p>يجمع كفيه ثم ينفث فيهما والقراءة فيهما: {قل هو الله أحد} و{قل أعوذ برب الفلق} و{قل أعوذ برب الناس} ومسح ما استطاع من الجسد يبدأ بهما على رأسه ووجه وما أقبل من جسده.</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي عشر - آية الكرسي -->
+        <div class="azkar-card sleep">
+            <h3>آية الكرسي</h3>
+            <p class="quran-text">أَعُوذُ بِاللَّهِ مِنَ الشَّيطَانِ الرَّجِيمِ ﴿ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَاوَاتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍۢ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَاوَاتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني عشر - آخر آيتين من سورة البقرة -->
+        <div class="azkar-card sleep">
+            <h3>آخر آيتين من سورة البقرة</h3>
+            <p class="quran-text">أَعُوذُ بِاللَّهِ مِنَ الشَّيطَانِ الرَّجِيمِ ﴿آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِنْ رُسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ * لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ رَبَّنَا لَا تُؤَاخِذْنَا إِنْ نَّسِينَآ أَوْ أَخْطَأْنَا رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِنْ قَبْلِنَا رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا أَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ﴾</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث عشر - دعاء الرب -->
+        <div class="azkar-card sleep">
+            <p>اللَّهُمَّ رَبَّ السَّمَاوَاتِ وَرَبَّ الْأَرْضِ وَرَبَّ الْعَرْشِ الْعَظِيمِ، رَبَّنَا وَرَبَّ كُلِّ شَيْءٍ، فَالِقَ الْحَبِّ وَالنَّوَى، وَمُنْزِلَ التَّوْرَاةِ وَالْإِنْجِيلِ وَالْفُرْقَانِ، أَعُوذُ بِكَ مِنْ شَرِّ كُلِّ شَيْءٍ أَنْتَ آخِذٌ بِنَاصِيَتِهِ، اللَّهُمَّ أَنْتَ الْأَوَّلُ فَلَيْسَ قَبْلَكَ شَيْءٌ، وَأَنْتَ الْآخِرُ فَلَيْسَ بَعْدَكَ شَيْءٌ، وَأَنْتَ الظَّاهِرُ فَلَيْسَ فَوْقَكَ شَيْءٌ، وَأَنْتَ الْبَاطِنُ فَلَيْسَ دُونَكَ شَيْءٌ، اقْضِ عَنَّا الدَّيْنَ، وَأَغْنِنَا مِنَ الْفَقْرِ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- أذكار الاستيقاظ -->
+<div id="wake" class="section">
+    <h2 class="section-title">أذكار الاستيقاظ</h2>
+    <div class="azkar-grid">
+        <!-- الذكر الأول -->
+        <div class="azkar-card wake">
+            <p>الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني -->
+        <div class="azkar-card wake">
+            <p>الْحَمْدُ لِلَّهِ الَّذِي عَافَانِي فِي جَسَدِي وَرَدَّ عَلَيَّ رُوحِي وَأَذِنَ لِي بِذِكْرِهِ</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث -->
+        <div class="azkar-card wake">
+            <p>لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَلاَ إِلَهَ إِلاَّ اللَّهُ، وَاللَّهُ أَكْبَرُ، وَلاَ حَوْلَ وَلاَ قُوَّةَ إِلاَّ بِاللَّهِ الْعَلِيِّ الْعَظِيمِ. رَبِّ اغْفِرْ لِي</p>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- التسابيح -->
+<div id="tasbih" class="section">
+    <h2 class="section-title">تسابيح</h2>
+    <div class="azkar-grid">
+        <!-- الذكر الأول -->
+        <div class="azkar-card tasbih">
+            <p>سُبْحَانَ اللَّهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني -->
+        <div class="azkar-card tasbih">
+            <p>سُبْحَانَ اللَّهِ وَبِحَمْدِهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث -->
+        <div class="azkar-card tasbih">
+            <p>سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع -->
+        <div class="azkar-card tasbih">
+            <p>سُبْحَانَ اللهِ العَظِيمِ وَبِحَمْدِهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس -->
+        <div class="azkar-card tasbih">
+            <p>سُبْحَانَ اللَّهِ وَبِحَمْدِهِ ، سُبْحَانَ اللَّهِ الْعَظِيمِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس -->
+        <div class="azkar-card tasbih">
+            <p>لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع -->
+        <div class="azkar-card tasbih">
+            <p>الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثامن -->
+        <div class="azkar-card tasbih">
+            <p>لا حَوْلَ وَلا قُوَّةَ إِلا بِاللَّهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر التاسع -->
+        <div class="azkar-card tasbih">
+            <p>اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَى سَيِّدِنَا مُحَمَّد</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر العاشر -->
+        <div class="azkar-card tasbih">
+            <p>أَسْتَغْفِرُ اللهَ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الحادي عشر -->
+        <div class="azkar-card tasbih">
+            <p>سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَلا إِلَهَ إِلا اللَّهُ، وَاللَّهُ أَكْبَرُ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثاني عشر -->
+        <div class="azkar-card tasbih">
+            <p>لا إِلَهَ إِلا اللَّهُ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الثالث عشر -->
+        <div class="azkar-card tasbih">
+            <p>اللَّهُ أَكْبَرُ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الرابع عشر -->
+        <div class="azkar-card tasbih">
+            <p>سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَلا إِلَهَ إِلا اللَّهُ، وَاللَّهُ أَكْبَرُ، اللَّهُمَّ اغْفِرْ لِي، اللَّهُمَّ ارْحَمْنِي، اللَّهُمَّ ارْزُقْنِي</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر الخامس عشر -->
+        <div class="azkar-card tasbih">
+            <p>الْحَمْدُ لِلَّهِ حَمْدًا كَثِيرًا طَيِّبًا مُبَارَكًا فِيهِ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السادس عشر -->
+        <div class="azkar-card tasbih">
+            <p>اللَّهُ أَكْبَرُ كَبِيرًا، وَالْحَمْدُ لِلَّهِ كَثِيرًا، وَسُبْحَانَ اللَّهِ بُكْرَةً وَأَصِيلًا</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الذكر السابع عشر -->
+        <div class="azkar-card tasbih">
+            <p>اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ، وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ، اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ</p>
+            <span class="azkar-count">100 مرة</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- فضل الذكر -->
+<div id="virtue-dhikr" class="section">
+    <h2 class="section-title">فضل الذكر</h2>
+    <div class="azkar-grid">
+        <!-- الفقرة الأولى -->
+        <div class="azkar-card virtue-dhikr">
+            <p>إنَّ من أفضل الأعمال الصالحة اليسيرة التي تقرب المسلم إلى ربه جل وعلا الذكرُ.</p>
+        </div>
+
+        <!-- الفقرة الثانية -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"وَلَذِكْرُ اللَّهِ أَكْبَرُ"</p>
+            <span class="azkar-count">سورة العنكبوت - الآية 45</span>
+        </div>
+
+        <!-- الفقرة الثالثة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"وَسَبِّحُوهُ بُكْرَةً وَأَصِيلًا"</p>
+            <span class="azkar-count">سورة الأحزاب - الآية 42</span>
+        </div>
+
+        <!-- الفقرة الرابعة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلا تَكْفُرُونِ"</p>
+            <span class="azkar-count">سورة البقرة - الآية 152</span>
+        </div>
+
+        <!-- الفقرة الخامسة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"يَا أَيُّهَا الَّذِينَ آمَنُوا اذْكُرُوا اللَّهَ ذِكْراً كَثِيراً"</p>
+            <span class="azkar-count">سورة الأحزاب - الآية 41</span>
+        </div>
+
+        <!-- الفقرة السادسة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"وَالذَّاكِرِينَ اللَّهَ كَثِيراً وَالذَّاكِرَاتِ أَعَدَّ اللَّهُ لَهُمْ مَغْفِرَةً وَأَجْراً عَظِيمًا"</p>
+            <span class="azkar-count">سورة الأحزاب - الآية 35</span>
+        </div>
+
+        <!-- الفقرة السابعة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"وَاذْكُر رَّبَّكَ كَثِيرًا وَسَبِّحْ بِالْعَشِيِّ وَالْإِبْكَارِ"</p>
+            <span class="azkar-count">سورة آل عمران - الآية 41</span>
+        </div>
+
+        <!-- الفقرة الثامنة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"الَّذِينَ يَذْكُرُونَ اللَّهَ قِيَامًا وَقُعُودًا وَعَلَىٰ جُنُوبِهِمْ"</p>
+            <span class="azkar-count">سورة آل عمران - الآية 191</span>
+        </div>
+
+        <!-- الفقرة التاسعة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"فَإِذَا قَضَيْتُم مَّنَاسِكَكُمْ فَاذْكُرُوا اللَّهَ كَذِكْرِكُمْ آبَاءَكُمْ أَوْ أَشَدَّ ذِكْرًا"</p>
+            <span class="azkar-count">سورة البقرة - الآية 200</span>
+        </div>
+
+        <!-- الفقرة العاشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تُلْهِكُمْ أَمْوَالُكُمْ وَلَا أَوْلَادُكُمْ عَن ذِكْرِ اللَّهِ"</p>
+            <span class="azkar-count">سورة المنافقون - الآية 9</span>
+        </div>
+
+        <!-- الفقرة الحادية عشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>"وَاذْكُرْ رَبَّكَ فِي نَفْسِكَ تَضَرُّعاً وَخِيفَةً وَدُونَ الْجَهْرِ مِنْ الْقَوْلِ بِالْغُدُوِّ وَالآصَالِ وَلا تَكُنْ مِنْ الْغَافِلِينَ"</p>
+            <span class="azkar-count">سورة الأعراف - الآية 205</span>
+        </div>
+
+        <!-- الفقرة الثانية عشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>قال رسول الله صلى الله عليه وسلم: "مثل الذي يذكر ربه و الذي لا يذكر ربه مثل الحي و الميت"</p>
+            <span class="azkar-count">رواه البخاري ومسلم</span>
+        </div>
+
+        <!-- الفقرة الثالثة عشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>قال رسول الله صلى الله عليه وسلم: "ألا أنبئكم بخير أعمالكم و أزكاها عند مليككم و أرفعها في درجاتكم و خير لكم من أنفاق الذهب و الورق و خير لكم من أن تلقوا عدوكم فتضربوا أعناقهم و يضربوا أعناقكم؟ " قالو بلى. قال: "ذكر الله تعالى"</p>
+            <span class="azkar-count">رواه الترمذي وابن ماجة</span>
+        </div>
+
+        <!-- الفقرة الرابعة عشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>قال رسول الله صلى الله عليه وسلم: "يقول الله تعالى: أنا عند ظن عبدي بي, و أنا معه إذا ذكرني, فان ذكرني في نفسه ذكرته في نفسي و ان ذكرني في ملأ ذكرته في ملأ خير منهم, و ان تقرب إلي شبرا تقربت اليه ذراعا و ان تقرب إلى ذراعا تقربت اليه باعا و ان اتاني يمشي أتيته هرولة"</p>
+            <span class="azkar-count">رواه البخاري ومسلم</span>
+        </div>
+
+        <!-- الفقرة الخامسة عشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>قال رسول الله صلى الله عليه وسلم: "من قعد مقعدا لم يذكر الله فيه كانت عليه من الله ترة, و من أضطجع مضجعا لم يذكر فيه الله كانت عليه ترة"</p>
+            <span class="azkar-count">رواه أبو داود والترمذي</span>
+        </div>
+
+        <!-- الفقرة السادسة عشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>قال رسول الله صلى الله عليه وسلم: "ما جلس قوم مجلسا لم يذكروا الله فيه, و لم يصلوا على نبيهم الا كان عليهم ترة فان شاء عذبهم و ان شاء غفر لهم"</p>
+            <span class="azkar-count">رواه الترمذي وابن ماجة</span>
+        </div>
+
+        <!-- الفقرة السابعة عشرة -->
+        <div class="azkar-card virtue-dhikr">
+            <p>قال رسول الله صلى الله عليه وسلم: "ما من قوم يقومون من مجلس لا يذكرون الله فيه الا قاموا عن مثل جيفة حمار و كان لهم حسرة"</p>
+            <span class="azkar-count">رواه أبو داود</span>
+        </div>
+    </div>
+</div>
+
+        <!-- فضل الدعاء -->
+<div id="virtue-dua" class="section">
+    <h2 class="section-title">فضل الدعاء</h2>
+    <div class="azkar-grid">
+        <!-- الفقرة الأولى -->
+        <div class="azkar-card virtue-dua">
+            <p>الدعاء هو أن يطلبَ الداعي ما ينفعُه وما يكشف ضُرَّه؛ وحقيقته إظهار الافتقار إلى الله، والتبرؤ من الحول والقوة، وهو سمةُ العبوديةِ، واستشعارُ الذلةِ البشرية، وفيه معنى الثناءِ على الله عز وجل، وإضافةِ الجود والكرم إليه.</p>
+        </div>
+
+        <!-- الفقرة الثانية -->
+        <div class="azkar-card virtue-dua">
+            <p>"وَقَالَ رَبُّكُمُ ادْعُونِي أَسْتَجِبْ لَكُمْ إِنَّ الَّذِينَ يَسْتَكْبِرُونَ عَنْ عِبَادَتِي سَيَدْخُلُونَ جَهَنَّمَ دَاخِرِينَ"</p>
+            <span class="azkar-count">سورة غافر - الآية 60</span>
+        </div>
+
+        <!-- الفقرة الثالثة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "الدُّعَاءُ هُوَ الْعِبَادَةُ"</p>
+            <span class="azkar-count">رواه الترمذي وابن ماجه، وصححه الألباني</span>
+        </div>
+
+        <!-- الفقرة الرابعة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "لَيْسَ شَيْءٌ أَكْرَمَ عَلَى اللَّهِ تَعَالَى مِنْ الدُّعَاءِ"</p>
+            <span class="azkar-count">رواه أحمد والبخاري، وابن ماجة، والترمذي والحاكم وصححه، ووافقه الذهبي</span>
+        </div>
+
+        <!-- الفقرة الخامسة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "مَنْ لَمْ يَسْأَلْ اللَّهَ يَغْضَبْ عَلَيْهِ"</p>
+            <span class="azkar-count">رواه الترمذيُّ، وابن ماجةَ، وصححه الحاكم، ووافقه الذهبي، وحسنه الألباني</span>
+        </div>
+
+        <!-- الفقرة السادسة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "أَعْجَزُ النَّاسِ مَنْ عَجَزَ عَنْ الدُّعَاءِ وَأَبْخَلُ النَّاسِ مَنْ بَخِلَ بِالسَّلَامِ"</p>
+            <span class="azkar-count">رواه ابن حبان وصححه الألباني</span>
+        </div>
+
+        <!-- الفقرة السابعة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "مَنْ فُتِحَ لَهُ مِنْكُمْ بَابُ الدُّعَاءِ فُتِحَتْ لَهُ أَبْوَابُ الرَّحْمَةِ وَمَا سُئِلَ اللَّهُ شَيْئًا يَعْنِي أَحَبَّ إِلَيْهِ مِنْ أَنْ يُسْأَلَ الْعَافِيَةَ وَقَالَ رَسُولُ اللَّهِ صَلَّى اللَّهم عَلَيْهِ وَسَلَّمَ إِنَّ الدُّعَاءَ يَنْفَعُ مِمَّا نَزَلَ وَمِمَّا لَمْ يَنْزِلْ فَعَلَيْكُمْ عِبَادَ اللَّهِ بِالدُّعَاءِ"</p>
+            <span class="azkar-count">رواه الترمذي وحسنه الألباني</span>
+        </div>
+
+        <!-- الفقرة الثامنة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "يقول الله عز وجل: أَنَا عِنْدَ ظَنِّ عَبْدِي بِي وَأَنَا مَعَهُ إِذَا دَعَانِي"</p>
+            <span class="azkar-count">رواه مسلم</span>
+        </div>
+
+        <!-- الفقرة التاسعة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ عَزَّ وَجَلَّ وَهُوَ سَاجِدٌ ، فَأَكْثِرُوا الدُّعَاءَ"</p>
+            <span class="azkar-count">رواه مسلم</span>
+        </div>
+
+        <!-- الفقرة العاشرة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "إِنَّ فِي اللَّيْلِ لَسَاعَةٌ لَا يُوَافِقُهَا رَجُلٌ مُسْلِمٌ يَسْأَلُ اللَّهَ تَعَالَى مِنْ أَمْرِ الدُّنْيَا وَالْآخِرَةِ إِلَّا أَعْطَاهُ إِيَّاهُ وَذَلِكَ كُلَّ لَيْلَةٍ"</p>
+            <span class="azkar-count">رواه مسلم</span>
+        </div>
+
+        <!-- الفقرة الحادية عشرة -->
+        <div class="azkar-card virtue-dua">
+            <p>قال رسول الله صلى الله عليه وسلم: "مَا مِنْ عَبْدٍ مُسْلِمٍ يَدْعُو لِأَخِيهِ بِظَهْرِ الْغَيْبِ إِلَّا قَالَ الْمَلَكُ : وَلَكَ بِمِثْلٍ"</p>
+            <span class="azkar-count">رواه مسلم</span>
+        </div>
+
+        <!-- الفقرة الثانية عشرة -->
+        <div class="azkar-card virtue-dua">
+            <p>"وَإِذَا سَأَلَكَ عِبَادِي عَنِّي فَإِنِّي قَرِيبٌ أُجِيبُ دَعْوَةَ الدَّاعِ إِذَا دَعَانِ فَلْيَسْتَجِيبُوا لِي وَلْيُؤْمِنُوا بِي لَعَلَّهُمْ يَرْشُدُونَ"</p>
+            <span class="azkar-count">سورة البقرة - الآية 186</span>
+        </div>
+
+        <!-- الفقرة الثالثة عشرة -->
+        <div class="azkar-card virtue-dua">
+            <p>"ادْعُوا رَبَّكُمْ تَضَرُّعًا وَخُفْيَةً إِنَّهُ لَا يُحِبُّ الْمُعْتَدِينَ"</p>
+            <span class="azkar-count">سورة الأعراف - الآية 55</span>
+        </div>
+
+        <!-- الفقرة الرابعة عشرة -->
+        <div class="azkar-card virtue-dua">
+            <p>"قُلْ مَا يَعْبَأُ بِكُمْ رَبِّي لَوْلَا دُعَاؤُكُمْ"</p>
+            <span class="azkar-count">سورة الفرقان - الآية 77</span>
+        </div>
+
+        <!-- الفقرة الخامسة عشرة -->
+        <div class="azkar-card virtue-dua">
+            <p>"وَقالَ رَبُّكُمُ ادْعُونِي أَسْتَجِبْ لَكُمْ"</p>
+            <span class="azkar-count">سورة غافر - الآية 60</span>
+        </div>
+
+        <!-- الفقرة السادسة عشرة -->
+        <div class="azkar-card virtue-dua">
+            <p>"أَمَّنْ يُجِيبُ الْمُضْطَرَّ إِذَا دَعَاهُ وَيَكْشِفُ السُّوءَ"</p>
+            <span class="azkar-count">سورة النمل - الآية 62</span>
+        </div>
+    </div>
+</div>
+
+        <!-- أدعية نبوية -->
+<div id="prophetic-dua" class="section">
+    <h2 class="section-title">أدعية نبوية</h2>
+    <div class="azkar-grid">
+        <!-- الدعاء الأول -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ</p>
+            <span class="azkar-count">رواه البخاري (6306) عن شداد بن أوس - سيد الاستغفار</span>
+        </div>
+
+        <!-- الدعاء الثاني -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي ظَلَمْتُ نَفْسِي ظُلْمًا كَثِيرًا، وَلَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ، فَاغْفِرْ لِي مَغْفِرَةً مِنْ عِنْدِكَ وَارْحَمْنِي إِنَّكَ أَنْتَ الْغَفُورُ الرَّحِيمُ</p>
+            <span class="azkar-count">رواه البخاري (834) ومسلم (6869) عن أبي بكر</span>
+        </div>
+
+        <!-- الدعاء الثالث -->
+        <div class="azkar-card prophetic-dua">
+            <p>رَبِّ اغْفِرْ لِي خَطِيئَتِي وَجَهْلِي وَإِسْرَافِي فِي أَمْرِي كُلِّهِ وَمَا أَنْتَ أَعْلَمُ بِهِ مِنِّي، اللَّهُمَّ اغْفِرْ لِي خَطَايَايَ وَعَمْدِي وَجَهْلِي وَهَزْلِي، وَكُلُّ ذَلِكَ عِنْدِي، اللَّهُمَّ اغْفِرْ لِي مَا قَدَّمْتُ وَمَا أَخَّرْتُ وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ وَأَنْتَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ</p>
+            <span class="azkar-count">رواه البخاري (6398) ومسلم (6901) عن أبي موسى</span>
+        </div>
+
+        <!-- الدعاء الرابع -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ اغْفِرْ لِي ذَنْبِي كُلَّهُ، دِقَّهُ، وَجِلَّهُ، وَأَوَّلَهُ، وَآخِرَهُ، وَعَلَانِيَتَهُ، وَسِرَّهُ</p>
+            <span class="azkar-count">رواه مسلم (1084) عن أبي هريرة</span>
+        </div>
+
+        <!-- الدعاء الخامس -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ وَالْعَجْزِ وَالْكَسَلِ وَالْجُبْنِ وَالْبُخْلِ وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ</p>
+            <span class="azkar-count">رواه البخاري (6369) عن أنس</span>
+        </div>
+
+        <!-- الدعاء السادس -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْبُخْلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ، وَأَعُوذُ بِكَ أَنْ أُرَدَّ إِلَى أَرْذَلِ الْعُمُرِ، وَأَعُوذُ بِكَ مِنْ فِتْنَةِ الدُّنْيَا، وَأَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ</p>
+            <span class="azkar-count">رواه البخاري (6365) عن سعد بن أبي وقاص</span>
+        </div>
+
+        <!-- الدعاء السابع -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكَسَلِ وَالْهَرَمِ وَالْمَأْثَمِ وَالْمَغْرَمِ، وَمِنْ فِتْنَةِ الْقَبْرِ وَعَذَابِ الْقَبْرِ، وَمِنْ فِتْنَةِ النَّارِ وَعَذَابِ النَّارِ، وَمِنْ شَرِّ فِتْنَةِ الْغِنَى، وَأَعُوذُ بِكَ مِنْ فِتْنَةِ الْفَقْرِ، وَأَعُوذُ بِكَ مِنْ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ، اللَّهُمَّ اغْسِلْ عَنِّي خَطَايَايَ بِمَاءِ الثَّلْجِ وَالْبَرَدِ، وَنَقِّ قَلْبِي مِنَ الْخَطَايَا كَمَا نَقَّيْتَ الثَّوْبَ الْأَبِيَضَ مِنَ الدَّنَسِ، وَبَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ</p>
+            <span class="azkar-count">رواه البخاري (6368) ومسلم (6871) عن عائشة</span>
+        </div>
+
+        <!-- الدعاء الثامن -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ رَبَّ السَّمَوَاتِ وَرَبَّ الْأَرْضِ وَرَبَّ الْعَرْشِ الْعَظِيمِ، رَبَّنَا وَرَبَّ كُلِّ شَيْءٍ، فَالِقَ الْحَبِّ وَالنَّوَى وَمُنْزِلَ التَّوْرَاةِ وَالْإِنْجِيلِ وَالْفُرْقَانِ، أَعُوذُ بِكَ مِنْ شَرِّ كُلِّ شَيْءٍ أَنْتَ آخِذٌ بِنَاصِيَتِهِ، اللَّهُمَّ أَنْتَ الْأَوَّلُ فَلَيْسَ قَبْلَكَ شَيْءٌ، وَأَنْتَ الْآخِرُ فَلَيْسَ بَعْدَكَ شَيْءٌ، وَأَنْتَ الظَّاهِرُ فَلَيْسَ فَوْقَكَ شَيْءٌ، وَأَنْتَ الْبَاطِنُ فَلَيْسَ دُونَكَ شَيْءٌ، اقْضِ عَنَّا الدَّيْنَ وَأَغْنِنَا مِنَ الْفَقْرِ</p>
+            <span class="azkar-count">رواه مسلم (6889) عن أبي هريرة</span>
+        </div>
+
+        <!-- الدعاء التاسع -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ شَرِّ مَا عَمِلْتُ وَمِنْ شَرِّ مَا لَمْ أَعْمَلْ</p>
+            <span class="azkar-count">رواه مسلم (6895) عن عائشة</span>
+        </div>
+
+        <!-- الدعاء العاشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ أَصْلِحْ لِي دِينِي الَّذِي هُوَ عِصْمَةُ أَمْرِي، وَأَصْلِحْ لِي دُنْيَايَ الَّتِي فِيهَا مَعَاشِي، وَأَصْلِحْ لِي آخِرَتِي الَّتِي فِيهَا مَعَادِي وَاجْعَلِ الْحَيَاةَ زِيَادَةً لِي فِي كُلِّ خَيْرٍ، وَاجْعَلِ الْمَوْتَ رَاحَةً لِي مِنْ كُلِّ شَرٍّ</p>
+            <span class="azkar-count">رواه مسلم (6903) عن أبي هريرة</span>
+        </div>
+
+        <!-- الدعاء الحادي عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى</p>
+            <span class="azkar-count">رواه مسلم (6904) عن ابن مسعود</span>
+        </div>
+
+        <!-- الدعاء الثاني عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَالْجُبْنِ وَالْبُخْلِ، وَالْهَرَمِ وَعَذَابِ الْقَبْرِ، اللَّهُمَّ آتِ نَفْسِي تَقْوَاهَا وَزَكِّهَا أَنْتَ خَيْرُ مَنْ زَكَّاهَا، أَنْتَ وَلِيُّهَا وَمَوْلَاهَا، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عِلْمٍ لَا يَنْفَعُ، وَمِنْ قَلْبٍ لَا يَخْشَعُ، وَمِنْ نَفْسٍ لَا تَشْبَعُ، وَمِنْ دَعْوَةٍ لَا يُسْتَجَابُ لَهَا</p>
+            <span class="azkar-count">رواه مسلم (6906) عن زيد بن أرقم</span>
+        </div>
+
+        <!-- الدعاء الثالث عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ لَكَ أَسْلَمْتُ وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ وَإِلَيْكَ أَنَبْتُ وَبِكَ خَاصَمْتُ، اللَّهُمَّ إِنِّي أَعُوذُ بِعِزَّتِكَ لَا إِلَهَ إِلَّا أَنْتَ أَنْ تُضِلَّنِي، أَنْتَ الْحَيُّ الَّذِي لَا يَمُوتُ وَالْجِنُّ وَالْإِنْسُ يَمُوتُونَ</p>
+            <span class="azkar-count">رواه البخاري (7383) ومسلم (6899) عن ابن عباس</span>
+        </div>
+
+        <!-- الدعاء الرابع عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ زَوَالِ نِعْمَتِكَ وَتَحَوُّلِ عَافِيَتِكَ وَفُجَاءَةِ نِقْمَتِكَ وَجَمِيعِ سَخَطِكَ</p>
+            <span class="azkar-count">رواه مسلم (6943) عن ابن عمر</span>
+        </div>
+
+        <!-- الدعاء الخامس عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ مُصَرِّفَ الْقُلُوبِ صَرِّفْ قُلُوبَنَا عَلَى طَاعَتِكَ</p>
+            <span class="azkar-count">رواه مسلم (6750) عن عبد الله بن عمرو</span>
+        </div>
+
+        <!-- الدعاء السادس عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ رَبَّ جَبْرَائِيلَ وَمِيكَائِيلَ وَإِسْرَافِيلَ، فَاطِرَ السَّمَوَاتِ وَالْأَرْضِ، عَالِمَ الْغَيْبِ وَالشَّهَادَةِ، أَنْتَ تَحْكُمُ بَيْنَ عِبَادِكَ فِيمَا كَانُوا فِيهِ يَخْتَلِفُونَ، اهْدِنِي لِمَا اخْتُلِفَ فِيهِ مِنَ الْحَقِّ بِإِذْنِكَ، إِنَّكَ تَهْدِي مَنْ تَشَاءُ إِلَى صِرَاطٍ مُسْتَقِيمٍ</p>
+            <span class="azkar-count">رواه مسلم (1811) عن عائشة</span>
+        </div>
+
+        <!-- الدعاء السابع عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِرِضَاكَ مِنْ سَخَطِكَ، وَبِمُعَافَاتِكَ مِنْ عُقُوبَتِكَ، وَأَعُوذُ بِكَ مِنْكَ، لَا أُحْصِي ثَنَاءً عَلَيْكَ، أَنْتَ كَمَا أَثْنَيْتَ عَلَى نَفْسِكَ</p>
+            <span class="azkar-count">رواه مسلم (1090) عن عائشة</span>
+        </div>
+
+        <!-- الدعاء الثامن عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ جَهْدِ الْبَلَاءِ وَدَرَكِ الشَّقَاءِ وَسُوءِ الْقَضَاءِ وَشَمَاتَةِ الْأَعْدَاءِ</p>
+            <span class="azkar-count">رواه البخاري (6347) ومسلم (6877) عن أبي هريرة</span>
+        </div>
+
+        <!-- الدعاء التاسع عشر -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ اجْعَلْ لِي فِي قَلْبِي نُورًا، وَفِي لِسَانِي نُورًا، وَفِي سَمْعِي نُورًا، وَفِي بَصَرِي نُورًا، وَمِنْ فَوْقِي نُورًا، وَمِنْ تَحْتِي نُورًا، وَعَنْ يَمِينِي نُورًا، وَعَنْ شِمَالِي نُورًا، وَمِنْ بَيْنِ يَدَيَّ نُورًا، وَمِنْ خَلْفِي نُورًا، وَاجْعَلْ فِي نَفْسِي نُورًا، وَأَعْظِمْ لِي نُورًا</p>
+            <span class="azkar-count">رواه البخاري (6316) ومسلم (1797) عن ابن عباس</span>
+        </div>
+
+        <!-- الدعاء العشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنَ الْخَيْرِ كُلِّهِ عَاجِلِهِ وَآجِلِهِ مَا عَلِمْتُ مِنْهُ وَمَا لَمْ أَعْلَمْ، وَأَعُوذُ بِكَ مِنَ الشَّرِّ كُلِّهِ عَاجِلِهِ وَآجِلِهِ مَا عَلِمْتُ مِنْهُ وَمَا لَمْ أَعْلَمْ، اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ خَيْرِ مَا سَأَلَكَ عَبْدُكَ وَنَبِيُّكَ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا عَاذَ بِهِ عَبْدُكَ وَنَبِيُّكَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَمَا قَرَّبَ إِلَيْهَا مِنْ قَوْلٍ أَوْ عَمَلٍ، وَأَعُوذُ بِكَ مِنَ النَّارِ وَمَا قَرَّبَ إِلَيْهَا مِنْ قَوْلٍ أَوْ عَمَلٍ وَأَسْأَلُكَ أَنْ تَجْعَلَ كُلَّ قَضَاءٍ قَضَيْتَهُ لِي خَيْرًا</p>
+            <span class="azkar-count">رواه ابن ماجه (3846) بإسناد صحيح عن عائشة</span>
+        </div>
+
+        <!-- الدعاء الحادي والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ بِعِلْمِكَ الْغَيْبَ وَقُدْرَتِكَ عَلَى الْخَلْقِ أَحْيِنِي مَا عَلِمْتَ الْحَيَاةَ خَيْرًا لِي، وَتَوَفَّنِي إِذَا عَلِمْتَ الْوَفَاةَ خَيْرًا لِي، اللَّهُمَّ وَأَسْأَلُكَ خَشْيَتَكَ فِي الْغَيْبِ وَالشَّهَادَةِ، وَأَسْأَلُكَ كَلِمَةَ الْحَقِّ فِي الرِّضَا وَالْغَضَبِ، وَأَسْأَلُكَ الْقَصْدَ فِي الْفَقْرِ وَالْغِنَى، وَأَسْأَلُكَ نَعِيمًا لَا يَنْفَدُ، وَأَسْأَلُكَ قُرَّةَ عَيْنٍ لَا تَنْقَطِعُ، وَأَسْأَلُكَ الرِّضَاءَ بَعْدَ الْقَضَاءِ، وَأَسْأَلُكَ بَرْدَ الْعَيْشِ بَعْدَ الْمَوْتِ، وَأَسْأَلُكَ لَذَّةَ النَّظَرِ إِلَى وَجْهِكَ وَالشَّوْقَ إِلَى لِقَائِكَ فِي غَيْرِ ضَرَّاءَ مُضِرَّةٍ وَلَا فِتْنَةٍ مُضِلَّةٍ، اللَّهُمَّ زَيِّنَّا بِزِينَةِ الْإِيمَانِ، وَاجْعَلْنَا هُدَاةً مُهْتَدِينَ</p>
+            <span class="azkar-count">رواه النَّسائي (1305) بإسناد حسن عن عمار بن ياسر</span>
+        </div>
+
+        <!-- الدعاء الثاني والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي، اللَّهُمَّ اسْتُرْ عَوْرَاتِي وَآمِنْ رَوْعَاتِي، وَاحْفَظْنِي مِنْ بَيْنِ يَدَيَّ وَمِنْ خَلْفِي وَعَنْ يَمِينِي وَعَنْ شِمَالِي وَمِنْ فَوْقِي، وَأَعُوذُ بِعَظَمَتِكَ أَنْ أُغْتَالَ مِنْ تَحْتِي</p>
+            <span class="azkar-count">رواه أبو داود (5074) وغيره بإسناد صحيح عن ابن عمر</span>
+        </div>
+
+        <!-- الدعاء الثالث والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ عَالِمَ الْغَيْبِ وَالشَّهَادَةِ، فَاطِرَ السَّمَوَاتِ وَالْأَرْضِ، رَبَّ كُلِّ شَيْءٍ وَمَلِيكَهُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ، أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي وَشَرِّ الشَّيْطَانِ وَشِرْكِهِ</p>
+            <span class="azkar-count">رواه الترمذي (3392) وغيره بإسناد صحيح عن أبي هريرة</span>
+        </div>
+
+        <!-- الدعاء الرابع والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ إِنِّي أَسْأَلُكَ الثَّبَاتَ فِي الْأَمْرِ، وَالْعَزِيمَةَ عَلَى الرُّشْدِ، وَأَسْأَلُكَ مُوجِبَاتِ رَحْمَتِكَ، وَعَزَائِمَ مَغْفِرَتِكَ، وَأَسْأَلُكَ شُكْرَ نِعْمَتِكَ، وَحُسْنَ عِبَادَتِكَ، وَأَسْأَلُكَ قَلْبًا سَلِيمًا، وَلِسَانًا صَادِقًا، وَأَسْأَلُكَ مِنْ خَيْرِ مَا تَعْلَمُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا تَعْلَمُ، وَأَسْتَغْفِرُكَ لِمَا تَعْلَمُ، إِنَّكَ أَنْتَ عَلَّامُ الْغُيُوبِ</p>
+            <span class="azkar-count">رواه الطبراني في "الكبير" (7135) عن شداد بن أوس</span>
+        </div>
+
+        <!-- الدعاء الخامس والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ</p>
+            <span class="azkar-count">رواه الترمذي (3563) بإسناد حسن عن علي</span>
+        </div>
+
+        <!-- الدعاء السادس والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَهَ إِلَّا أَنْتَ</p>
+            <span class="azkar-count">رواه أبو داود (5090) بإسناد حسن عن أبي بكرة</span>
+        </div>
+
+        <!-- الدعاء السابع والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>رَبِّ أَعِنِّي وَلَا تُعِنْ عَلَيَّ، وَانْصُرْنِي وَلَا تَنْصُرْ عَلَيَّ، وَامْكُرْ لِي وَلَا تَمْكُرْ عَلَيَّ، وَاهْدِنِي وَيَسِّرِ الْهُدَى لِي، وَانْصُرْنِي عَلَى مَنْ بَغَى عَلَيَّ، رَبِّ اجْعَلْنِي لَكَ شَكَّارًا، لَكَ ذَكَّارًا، لَكَ رَهَّابًا، لَكَ مِطْوَاعًا، لَكَ مُخْبِتًا إِلَيْكَ أَوَّاهًا مُنِيبًا، رَبِّ تَقَبَّلْ تَوْبَتِي وَاغْسِلْ حَوْبَتِي وَأَجِبْ دَعْوَتِي وَثَبِّتْ حُجَّتِي وَسَدِّدْ لِسَانِي وَاهْدِ قَلْبِي وَاسْلُلْ سَخِيمَةَ صَدْرِي</p>
+            <span class="azkar-count">رواه الترمذي (3551) وغيره بإسناد صحيح عن ابن عباس</span>
+        </div>
+
+        <!-- الدعاء الثامن والعشرون -->
+        <div class="azkar-card prophetic-dua">
+            <p>اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ، اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ</p>
+            <span class="azkar-count">رواه البخاري (3370) ومسلم (908) عن كعب بن عجرة</span>
+        </div>
+    </div>
+</div>
+
+        <!-- أدعية من القرآن -->
+<div id="quran-dua" class="section">
+    <h2 class="section-title">أدعية من القرآن</h2>
+    <div class="azkar-grid">
+        <!-- الدعاء الأول -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ"</p>
+            <span class="azkar-count">سورة البقرة - الآية 201</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثاني -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَثَبِّتْ أَقْدَامَنَا وَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ"</p>
+            <span class="azkar-count">سورة البقرة - الآية 250</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثالث -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا لاَ تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا رَبَّنَا وَلاَ تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِن قَبْلِنَا رَبَّنَا وَلاَ تُحَمِّلْنَا مَا لاَ طَاقَةَ لَنَا بِهِ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا أَنتَ مَوْلاَنَا فَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ"</p>
+            <span class="azkar-count">سورة البقرة - الآية 286</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الرابع -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا لاَ تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً إِنَّكَ أَنتَ الْوَهَّابُ"</p>
+            <span class="azkar-count">سورة آل عمران - الآية 8</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الخامس -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا إِنَّنَا آمَنَّا فَاغْفِرْ لَنَا ذُنُوبَنَا وَقِنَا عَذَابَ النَّارِ"</p>
+            <span class="azkar-count">سورة آل عمران - الآية 16</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء السادس -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبِّ هَبْ لِي مِن لَّدُنْكَ ذُرِّيَّةً طَيِّبَةً إِنَّكَ سَمِيعُ الدُّعَاء"</p>
+            <span class="azkar-count">سورة آل عمران - الآية 38</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء السابع -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا آمَنَّا بِمَا أَنزَلْتَ وَاتَّبَعْنَا الرَّسُولَ فَاكْتُبْنَا مَعَ الشَّاهِدِينَ"</p>
+            <span class="azkar-count">سورة آل عمران - الآية 53</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثامن -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا اغْفِرْ لَنَا ذُنُوبَنَا وَإِسْرَافَنَا فِي أَمْرِنَا وَثَبِّتْ أَقْدَامَنَا وانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ"</p>
+            <span class="azkar-count">سورة آل عمران - الآية 147</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء التاسع -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا مَا خَلَقْتَ هَذا بَاطِلاً سُبْحَانَكَ فَقِنَا عَذَابَ النَّارِ رَبَّنَا إِنَّكَ مَن تُدْخِلِ النَّارَ فَقَدْ أَخْزَيْتَهُ وَمَا لِلظَّالِمِينَ مِنْ أَنصَارٍ رَّبَّنَا إِنَّنَا سَمِعْنَا مُنَادِيًا يُنَادِي لِلإِيمَانِ أَنْ آمِنُواْ بِرَبِّكُمْ فَآمَنَّا رَبَّنَا فَاغْفِرْ لَنَا ذُنوبَنَا وَكَفِّرْ عَنَّا سَيِّئَاتِنَا وَتَوَفَّنَا مَعَ الأبْرَارِ رَبَّنَا وَآتِنَا مَا وَعَدتَّنَا عَلَى رُسُلِكَ وَلاَ تُخْزِنَا يَوْمَ الْقِيَامَةِ إِنَّكَ لاَ تُخْلِفُ الْمِيعَادَ"</p>
+            <span class="azkar-count">سورة آل عمران - الآيات 191-194</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء العاشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ"</p>
+            <span class="azkar-count">سورة الأعراف - الآية 23</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الحادي عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا لاَ تَجْعَلْنَا مَعَ الْقَوْمِ الظَّالِمِينَ"</p>
+            <span class="azkar-count">سورة الأعراف - الآية 47</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثاني عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَتَوَفَّنَا مُسْلِمِينَ"</p>
+            <span class="azkar-count">سورة الأعراف - الآية 126</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثالث عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"حَسْبِيَ اللّهُ لا إِلَـهَ إِلاَّ هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ"</p>
+            <span class="azkar-count">سورة التوبة - الآية 129</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الرابع عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا لاَ تَجْعَلْنَا فِتْنَةً لِّلْقَوْمِ الظَّالِمِينَ وَنَجِّنَا بِرَحْمَتِكَ مِنَ الْقَوْمِ الْكَافِرِينَ"</p>
+            <span class="azkar-count">سورة يونس - الآيات 85-86</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الخامس عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبِّ إِنِّي أَعُوذُ بِكَ أَنْ أَسْأَلَكَ مَا لَيْسَ لِي بِهِ عِلْمٌ وَإِلاَّ تَغْفِرْ لِي وَتَرْحَمْنِي أَكُن مِّنَ الْخَاسِرِينَ"</p>
+            <span class="azkar-count">سورة هود - الآية 47</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء السادس عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبِّ اجْعَلْنِي مُقِيمَ الصَّلاَةِ وَمِن ذُرِّيَّتِي رَبَّنَا وَتَقَبَّلْ دُعَاء"</p>
+            <span class="azkar-count">سورة إبراهيم - الآية 40</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء السابع عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ"</p>
+            <span class="azkar-count">سورة إبراهيم - الآية 41</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثامن عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَّبِّ أَدْخِلْنِي مُدْخَلَ صِدْقٍ وَأَخْرَجْنِي مُخْرَجَ صِدْقٍ وَاجْعَل لِّي مِن لَّدُنكَ سُلْطَانًا نَّصِيرًا"</p>
+            <span class="azkar-count">سورة الإسراء - الآية 80</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء التاسع عشر -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا آتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا"</p>
+            <span class="azkar-count">سورة الكهف - الآية 10</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء العشرون -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي يَفْقَهُوا قَوْلِي"</p>
+            <span class="azkar-count">سورة طه - الآيات 25-28</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الحادي والعشرون -->
+        <div class="azkar-card quran-dua">
+            <p>"رَّبِّ زِدْنِي عِلْمًا"</p>
+            <span class="azkar-count">سورة طه - الآية 114</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثاني والعشرون -->
+        <div class="azkar-card quran-dua">
+            <p>"لا إِلَهَ إِلا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ"</p>
+            <span class="azkar-count">سورة الأنبياء - الآية 87</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الثالث والعشرون -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبِّ لَا تَذَرْنِي فَرْدًا وَأَنتَ خَيْرُ الْوَارِثِينَ"</p>
+            <span class="azkar-count">سورة الأنبياء - الآية 89</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الرابع والعشرون -->
+        <div class="azkar-card quran-dua">
+            <p>"رَّبِّ أَعُوذُ بِكَ مِنْ هَمَزَاتِ الشَّيَاطِينِ وَأَعُوذُ بِكَ رَبِّ أَن يَحْضُرُونِ"</p>
+            <span class="azkar-count">سورة المؤمنون - الآيات 97-98</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء الخامس والعشرون -->
+        <div class="azkar-card quran-dua">
+            <p>"رَبَّنَا آمَنَّا فَاغْفِرْ لَنَا وَارْحَمْنَا وَأَنتَ خَيْرُ الرَّاحِمِينَ"</p>
+            <span class="azkar-count">سورة المؤمنون - الآية 109</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+
+        <!-- الدعاء السادس والعشرون -->
+        <div class="azkar-card quran-dua">
+            <p>"رَّبِّ اغْفِرْ وَارْحَمْ وَأَنتَ خَيْرُ الرَّاحِمِينَ"</p>
+            <span class="azkar-count">سورة المؤمنون - الآية 118</span>
+            <div class="counter-container">
+                <button class="counter-btn" onclick="incrementCounter(this)">+</button>
+                <div class="counter-display">0</div>
+                <button class="counter-btn" onclick="resetCounter(this)">إعادة</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <footer>
+        <p>اللهم اجعل هذا العمل خالصًا لوجهك الكريم</p>
+        <p style="margin-top: 1rem; font-size: 0.85rem;">© 2024 أذكاري - جميع الحقوق محفوظة</p>
+    </footer>
+
+
+
+
+
+
+
+<script>
+
+
+
+// ==========================================
+// 1. تهيئة الصفحة (تحميل الإعدادات والثيم)
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+
+
+// === تشغيل وضع الأوفلاين والتثبيت ===
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js')
+            .then(() => console.log("تم تفعيل التطبيق"))
+            .catch(err => console.log("خطأ في التفعيل", err));
+    }
+
+
+
+    setupFlipCards();       
+    createToastElement();   
+    
+    // أ) تنظيف التاريخ لضمان بداية سليمة
+    history.replaceState({view: 'root'}, null, window.location.href);
+
+    // ب) استرجاع الثيم المحفوظ (الحل لسؤالك)
+    const savedTheme = localStorage.getItem('siteTheme');
+    const themeBtn = document.getElementById('theme-btn');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if(themeBtn) themeBtn.innerText = "الوضع النهاري";
+    }
+});
+
+// ==========================================
+// 2. المدير الذكي (التحكم في الرجوع)
+// ==========================================
+window.addEventListener('popstate', function(event) {
+    const popup = document.getElementById('ios-popup');
+    const settingsMenu = document.getElementById('popup-settings-menu');
+    const currentState = event.state ? event.state.view : 'root';
+
+    if (currentState === 'settings') {
+        settingsMenu.classList.add('active');
+        popup.classList.add('active'); 
+    } 
+    else if (currentState === 'popup') {
+        settingsMenu.classList.remove('active');
+        popup.classList.add('active');
+    } 
+    else {
+        settingsMenu.classList.remove('active');
+        popup.classList.remove('active');
+        
+        if (window.scrollY > 100) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+});
+
+// ==========================================
+// 3. دوال التفاعل (البوب أب والإعدادات)
+// ==========================================
+function showPopup(element) {
+    const overlay = document.getElementById('ios-popup');
+    const container = document.getElementById('popup-card-container');
+    const menu = document.getElementById('popup-settings-menu');
+    
+    menu.classList.remove('active');
+    container.innerHTML = '';
+    const clone = element.cloneNode(true);
+    
+    const metaTag = clone.querySelector('.azkar-count');
+    if(metaTag) {
+        const text = metaTag.innerText;
+        if(text.includes('مرة') || text.includes('مرات')) {
+            metaTag.setAttribute('data-type', 'count');
+        } else {
+            metaTag.setAttribute('data-type', 'source');
+        }
+    }
+    
+    container.appendChild(clone);
+    updatePopupView();
+    overlay.classList.add('active');
+    history.pushState({view: 'popup'}, null, window.location.href);
+}
+
+function toggleSettingsMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('popup-settings-menu');
+
+    if (menu.classList.contains('active')) {
+        history.back();
+    } else {
+        history.pushState({view: 'settings'}, null, window.location.href);
+        menu.classList.add('active');
+    }
+}
+
+function handlePopupClick(e) {
+    if(e.target.closest('.popup-settings-btn') || 
+       e.target.closest('.popup-settings-menu') || 
+       e.target.closest('.ios-popup-content')) {
+        return;
+    }
+    history.back();
+}
+
+function closePopup() {
+    history.go(-1);
+}
+
+// ==========================================
+// 4. حفظ واسترجاع التفضيلات (localStorage)
+// ==========================================
+let popupPrefs = { showCount: false, showSource: false };
+
+window.addEventListener('load', () => {
+    const saved = localStorage.getItem('popupPrefs');
+    if(saved) {
+        popupPrefs = JSON.parse(saved);
+        const tCount = document.getElementById('toggle-count');
+        const tSource = document.getElementById('toggle-source');
+        if(tCount) tCount.checked = popupPrefs.showCount;
+        if(tSource) tSource.checked = popupPrefs.showSource;
+    }
+});
+
+function updatePopupView() {
+    const container = document.getElementById('popup-card-container');
+    const showCount = document.getElementById('toggle-count').checked;
+    const showSource = document.getElementById('toggle-source').checked;
+    
+    if(showCount) container.classList.add('show-count');
+    else container.classList.remove('show-count');
+    
+    if(showSource) container.classList.add('show-source');
+    else container.classList.remove('show-source');
+    
+    localStorage.setItem('popupPrefs', JSON.stringify({ showCount, showSource }));
+}
+
+// دالة تبديل الثيم + الحفظ (جديد)
+function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('theme-btn');
+    
+    body.classList.toggle('dark-mode');
+    
+    let currentTheme = 'light';
+    if (body.classList.contains('dark-mode')) {
+        btn.innerText = "الوضع النهاري";
+        currentTheme = 'dark';
+    } else {
+        btn.innerText = "الوضع الليلي";
+        currentTheme = 'light';
+    }
+    
+    // حفظ الثيم في المتصفح عشان التحديث
+    localStorage.setItem('siteTheme', currentTheme);
+}
+
+// ==========================================
+// 5. الوظائف الأساسية (إعداد الكروت والنسخ)
+// ==========================================
+function setupFlipCards() {
+    const cards = document.querySelectorAll('.azkar-card');
+    cards.forEach(card => {
+        let targetCount = 1;
+        const countSpan = card.querySelector('.azkar-count');
+        if (countSpan) {
+            const matches = countSpan.innerText.match(/\d+/);
+            if (matches) targetCount = parseInt(matches[0]);
+        }
+
+        const originalClasses = Array.from(card.classList).filter(c => c !== 'azkar-card');
+        const dhikrParagraph = card.querySelector('p');
+        const dhikrText = dhikrParagraph ? dhikrParagraph.innerText : "";
+        const safeDhikrText = dhikrText.replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
+
+        const copyBtnHTML = `
+            <button class="copy-btn" onclick="copyDhikr(event, '${safeDhikrText}')" title="نسخ الذكر">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </button>
+        `;
+
+        const isQuranCard = card.querySelector('.quran-text');
+        let frontHTML = '';
+
+        if (isQuranCard) {
+            const h3 = card.querySelector('h3');
+            const p = card.querySelector('p');
+            const counterContainer = card.querySelector('.counter-container');
+            frontHTML += `<div class="quran-frame">`;
+            frontHTML += copyBtnHTML;
+            if (h3) frontHTML += h3.outerHTML;
+            if (p) frontHTML += p.outerHTML;
+            frontHTML += `</div>`; 
+            if (countSpan) frontHTML += countSpan.outerHTML;
+            if (counterContainer) frontHTML += counterContainer.outerHTML;
+        } else {
+            const originalContent = card.innerHTML;
+            frontHTML = copyBtnHTML + originalContent;
+        }
+
+        card.innerHTML = `
+            <div class="flip-card-inner" data-target="${targetCount}" data-current="0">
+                <div class="flip-card-front ${originalClasses.join(' ')}">
+                    ${frontHTML}
+                </div>
+                <div class="flip-card-back ${originalClasses.join(' ')}">
+                    <p>جَزَاكَ اللهُ خَيْرًا</p>
+                    <div class="reset-icon" onclick="resetFlippedCard(this)" title="إعادة الذكر">↺</div>
+                </div>
+            </div>
+        `;
+        card.classList.remove(...originalClasses);
+
+        let pressTimer;
+        const cardFront = card.querySelector('.flip-card-front');
+        const startPress = (e) => {
+            if (e.target.closest('button') || e.target.closest('.copy-btn')) return;
+            pressTimer = setTimeout(() => {
+                showPopup(cardFront);
+                if (navigator.vibrate) navigator.vibrate(50);
+            }, 500);
+        };
+        const cancelPress = () => { clearTimeout(pressTimer); };
+
+        card.addEventListener('touchstart', startPress, {passive: true});
+        card.addEventListener('touchend', cancelPress);
+        card.addEventListener('touchmove', cancelPress);
+        card.addEventListener('mousedown', startPress);
+        card.addEventListener('mouseup', cancelPress);
+        card.addEventListener('mouseleave', cancelPress);
+    });
+}
+
+function incrementCounter(btn) {
+    const flipInner = btn.closest('.flip-card-inner');
+    if (!flipInner) return;
+    const container = btn.closest('.counter-container');
+    const display = container.querySelector('.counter-display');
+    let current = parseInt(flipInner.getAttribute('data-current'));
+    const target = parseInt(flipInner.getAttribute('data-target'));
+    current++;
+    display.textContent = current;
+    flipInner.setAttribute('data-current', current);
+    if (current >= target) {
+        setTimeout(() => { flipInner.classList.add('flipped'); }, 300);
+    }
+}
+
+function resetCounter(btn) {
+    const container = btn.closest('.counter-container');
+    const display = container.querySelector('.counter-display');
+    const flipInner = btn.closest('.flip-card-inner');
+    display.textContent = 0;
+    if(flipInner) flipInner.setAttribute('data-current', 0);
+}
+
+function resetFlippedCard(icon) {
+    const flipInner = icon.closest('.flip-card-inner');
+    const frontDisplay = flipInner.querySelector('.counter-display');
+    frontDisplay.textContent = 0;
+    flipInner.setAttribute('data-current', 0);
+    flipInner.classList.remove('flipped');
+}
+
+function copyDhikr(event, text) {
+    event.stopPropagation();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => { showToast("تم نسخ الذكر"); })
+        .catch(err => { fallbackCopyTextToClipboard(text); });
+    } else { fallbackCopyTextToClipboard(text); }
+}
+
+function fallbackCopyTextToClipboard(text) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    textArea.style.top = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        var successful = document.execCommand('copy');
+        if(successful) showToast("تم نسخ الذكر");
+    } catch (err) {}
+    document.body.removeChild(textArea);
+}
+
+function createToastElement() {
+    if (!document.getElementById('copyToast')) {
+        const toast = document.createElement('div');
+        toast.className = 'copy-toast';
+        toast.id = 'copyToast';
+        document.body.appendChild(toast);
+    }
+}
+
+function showToast(message) {
+    const toast = document.getElementById('copyToast');
+    if (toast) {
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 2000);
+    }
+}
+
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => section.classList.remove('active'));
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) targetSection.classList.add('active');
+    const navBtns = document.querySelectorAll('.nav-btn');
+    navBtns.forEach(btn => btn.classList.remove('active'));
+    const activeBtn = Array.from(navBtns).find(btn => btn.getAttribute('onclick').includes(sectionId));
+    if(activeBtn) activeBtn.classList.add('active');
+}
+
+
+
+
+
+
+
+
+</script>
+
+<div id="ios-popup" class="ios-popup-overlay" onclick="handlePopupClick(event)">
+    
+    <div class="popup-settings-btn" onclick="toggleSettingsMenu(event)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+    </div>
+
+    <div id="popup-settings-menu" class="popup-settings-menu">
+        <label class="toggle-option">
+            <span>إظهار العدد</span>
+            <input type="checkbox" id="toggle-count" onchange="updatePopupView()">
+            <span class="toggle-switch"></span>
+        </label>
+        <label class="toggle-option">
+            <span>إظهار المصدر</span>
+            <input type="checkbox" id="toggle-source" onchange="updatePopupView()">
+            <span class="toggle-switch"></span>
+        </label>
+    </div>
+
+    <div class="ios-popup-content" id="popup-card-container">
+        </div>
+</div>
+</body>
+</html>
